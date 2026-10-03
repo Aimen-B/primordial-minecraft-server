@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -11,10 +11,14 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Collections;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
+using System.Web.Script.Serialization;
 
 namespace PrimordialLauncher {
     public class LauncherForm : Form {
-        private const string RELEASE_ZIP_URL = "https://github.com/Aimen-B/primordial-minecraft-server/releases/download/v1.0.0/Primordial-Adventures-Portable.zip";
+        public const string VERSION = "1.0.1";
         private const string SERVER_HOST = "mc.primordial.my";
         private const int SERVER_PORT = 25565;
         private const string CONFIG_FILE = "launcher_config.ini";
@@ -56,7 +60,6 @@ namespace PrimordialLauncher {
         private bool isGameInstalled = false;
         private bool isGameRunning = false;
         private bool isDownloading = false;
-        private WebClient webClient;
         private Process gameProcess;
         private System.Windows.Forms.Timer sessionTimer;
         private DateTime sessionStartTime;
@@ -76,7 +79,7 @@ namespace PrimordialLauncher {
         }
 
         private void InitUI() {
-            this.Text = "Primordial Adventures Launcher";
+            this.Text = "Primordial Adventures Launcher " + VERSION;
             this.AutoScaleMode = AutoScaleMode.None;
             this.ClientSize = new Size(800, 580);
             this.StartPosition = FormStartPosition.CenterScreen;
@@ -605,7 +608,7 @@ namespace PrimordialLauncher {
             if (baseInstallPath == "GLOBAL") {
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ElyPrismLauncher", "instances", "Primordial-Adventures");
             } else if (!string.IsNullOrEmpty(baseInstallPath)) {
-                return Path.Combine(baseInstallPath, "instances", "Primordial-Adventures");
+                return Path.Combine(baseInstallPath, "launcher", "instances", "Primordial-Adventures");
             }
             return AppDomain.CurrentDomain.BaseDirectory;
         }
@@ -747,79 +750,84 @@ namespace PrimordialLauncher {
         }
 
         private void StartGameDownload() {
+            foreach (Process existing in Process.GetProcessesByName("elyprismlauncher")) {
+                existing.Dispose();
+                MessageBox.Show("Close PineconeMC and Minecraft before repairing the installation.");
+                return;
+            }
             isDownloading = true;
             UpdateActionButton();
             prgAction.Visible = true;
+            prgAction.Value = 0;
             lblActionStatus.Visible = true;
-            lblActionStatus.Text = "Connecting to GitHub Releases...";
-            LogMessage("Starting download from GitHub Releases (1.6 GB)...");
-
-            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string installTarget = Path.Combine(localAppData, "PrimordialAdventures");
-            string tempZip = Path.Combine(Path.GetTempPath(), "Primordial-Adventures-Portable.zip");
-
-            webClient = new WebClient();
-            webClient.DownloadProgressChanged += delegate(object s, DownloadProgressChangedEventArgs e) {
-                prgAction.Value = e.ProgressPercentage;
-                double mbReceived = e.BytesReceived / 1048576.0;
-                double mbTotal = e.TotalBytesToReceive / 1048576.0;
-                lblActionStatus.Text = string.Format("Downloading: {0}% ({1:F0} MB / {2:F0} MB)", e.ProgressPercentage, mbReceived, mbTotal);
-            };
-
-            webClient.DownloadFileCompleted += delegate(object s, AsyncCompletedEventArgs e) {
-                if (e.Error != null) {
-                    MessageBox.Show("Download failed: " + e.Error.Message, "Download Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    isDownloading = false;
-                    prgAction.Visible = false;
-                    lblActionStatus.Visible = false;
-                    UpdateActionButton();
-                    LogMessage("Download failed: " + e.Error.Message);
-                    return;
-                }
-
-                ThreadPool.QueueUserWorkItem(delegate {
-                    try {
-                        this.BeginInvoke(new Action(delegate {
-                            lblActionStatus.Text = "Extracting game files (this takes ~30 seconds)...";
-                            LogMessage("Extracting package to " + installTarget + "...");
-                        }));
-
-                        if (!Directory.Exists(installTarget)) {
-                            Directory.CreateDirectory(installTarget);
-                        }
-
-                        ZipFile.ExtractToDirectory(tempZip, installTarget);
-                        File.Delete(tempZip);
-
-                        baseInstallPath = installTarget;
-                        isGameInstalled = true;
-                        isDownloading = false;
-
-                        this.BeginInvoke(new Action(delegate {
-                            prgAction.Visible = false;
-                            lblActionStatus.Visible = false;
-                            UpdateActionButton();
-                            LogMessage("Installation successfully finished!");
-                            MessageBox.Show("Installation Complete!\n\nClick 'PLAY NOW' to enter Primordial Adventures.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }));
-                    } catch (Exception ex) {
-                        this.BeginInvoke(new Action(delegate {
-                            MessageBox.Show("Extraction failed: " + ex.Message, "Extraction Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            isDownloading = false;
-                            UpdateActionButton();
-                            LogMessage("Extraction error: " + ex.Message);
-                        }));
+            lblActionStatus.Text = "Checking the current release...";
+            ThreadPool.QueueUserWorkItem(delegate {
+                string zip = Path.Combine(Path.GetTempPath(), "Primordial-" + Guid.NewGuid().ToString("N") + ".partial");
+                try {
+                    ReleaseManifest release = ReleaseInstaller.GetRelease();
+                    ReleaseAsset asset = release.assets["Primordial-Adventures-Portable.zip"];
+                    string target = isGameInstalled && baseInstallPath != "GLOBAL" ? baseInstallPath : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PrimordialAdventures");
+                    using (var client = new WebClient()) {
+                        client.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs args) {
+                            if (!IsDisposed) BeginInvoke(new Action(delegate { prgAction.Value = args.ProgressPercentage; lblActionStatus.Text = "Downloading " + release.version + ": " + args.ProgressPercentage + "%"; }));
+                        };
+                        client.DownloadFileTaskAsync(new Uri(asset.url),zip).GetAwaiter().GetResult();
                     }
-                });
-            };
+                    BeginInvoke(new Action(delegate { lblActionStatus.Text = "Verifying and installing game files..."; }));
+                    ReleaseInstaller.Install(zip,target,asset,release.version);
+                    baseInstallPath=target;
+                    isGameInstalled=true;
+                    BeginInvoke(new Action(delegate { LogMessage("Installed release " + release.version + ". Ready to play."); }));
+                } catch(Exception error) {
+                    if(!IsDisposed) BeginInvoke(new Action(delegate { LogMessage("Installation failed: " + error.Message); MessageBox.Show("Installation failed. You can retry safely.\n\n" + error.Message); }));
+                } finally {
+                    if(File.Exists(zip))File.Delete(zip);
+                    if(!IsDisposed)BeginInvoke(new Action(delegate { isDownloading=false; prgAction.Visible=false; lblActionStatus.Visible=false; UpdateActionButton(); }));
+                }
+            });
+        }
 
-            try {
-                webClient.DownloadFileAsync(new Uri(RELEASE_ZIP_URL), tempZip);
-            } catch (Exception ex) {
-                MessageBox.Show("Failed to start download: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                isDownloading = false;
-                UpdateActionButton();
+        private static void SetConfigValue(string path, string key, string value) {
+            string content = File.ReadAllText(path);
+            string pattern = "(?m)^" + Regex.Escape(key) + "=[^\r\n]*";
+            content = Regex.IsMatch(content, pattern) ? Regex.Replace(content, pattern, key + "=" + value) : content + "\r\n" + key + "=" + value + "\r\n";
+            File.WriteAllText(path, content);
+        }
+
+        public static void WriteOfflineAccount(string path, string nickname) {
+            if (!Regex.IsMatch(nickname, @"^[A-Za-z0-9_]{3,16}$"))
+                throw new ArgumentException("Invalid Minecraft nickname.");
+            var serializer = new JavaScriptSerializer();
+            var root = File.Exists(path) ? serializer.Deserialize<Dictionary<string, object>>(File.ReadAllText(path)) : new Dictionary<string, object>();
+            var accounts = new List<object>();
+            object oldAccounts;
+            if (root.TryGetValue("accounts", out oldAccounts)) {
+                foreach (Dictionary<string, object> account in (IEnumerable)oldAccounts) {
+                    account["active"] = false;
+                    var profile = account.ContainsKey("profile") ? account["profile"] as Dictionary<string, object> : null;
+                    if (Convert.ToString(account["type"]) == "Offline" &&
+                        (profile == null || Convert.ToString(profile["name"]) == nickname)) continue;
+                    accounts.Add(account);
+                }
             }
+            byte[] digest;
+            using (var md5 = MD5.Create()) digest = md5.ComputeHash(Encoding.UTF8.GetBytes("OfflinePlayer:" + nickname));
+            digest[6] = (byte)((digest[6] & 15) | 48);
+            digest[8] = (byte)((digest[8] & 63) | 128);
+            string uuid = BitConverter.ToString(digest).Replace("-", "").ToLowerInvariant();
+            accounts.Add(new {
+                active = true, type = "Offline",
+                entitlement = new { canPlayMinecraft = true, ownsMinecraft = true },
+                profile = new { id = uuid, name = nickname, capes = new object[0], skin = new { id = "", url = "", variant = "" } },
+                ygg = new { token = "0", iat = 0, extra = new { clientToken = uuid, userName = nickname } }
+            });
+            root["accounts"] = accounts;
+            root["formatVersion"] = 3;
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            string temp = path + ".primordial.tmp";
+            File.WriteAllText(temp, serializer.Serialize(root), new UTF8Encoding(false));
+            if (File.Exists(path)) File.Replace(temp, path, path + ".primordial.bak");
+            else File.Move(temp, path);
         }
 
         private void LaunchGame(string nickname) {
@@ -829,7 +837,7 @@ namespace PrimordialLauncher {
 
                 string launcherExe;
                 string accountsJson;
-                string instanceCfg;
+                string instanceCfg = null;
                 int ramMb = GetSelectedRamMb();
 
                 if (baseInstallPath == "GLOBAL") {
@@ -855,6 +863,7 @@ namespace PrimordialLauncher {
                             string[] lines = cfgContent.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
                             for (int i = 0; i < lines.Length; i++) {
                                 if (lines[i].StartsWith("JavaPath=")) lines[i] = "JavaPath=" + bundledJava;
+                                if (lines[i].StartsWith("OverrideJavaLocation=")) lines[i] = "OverrideJavaLocation=true";
                                 if (lines[i].StartsWith("MaxMemAlloc=")) lines[i] = "MaxMemAlloc=" + ramMb;
                             }
                             File.WriteAllText(targetCfg, string.Join("\r\n", lines));
@@ -862,14 +871,18 @@ namespace PrimordialLauncher {
                     }
                 }
 
-                // Write offline account with complete ygg schema
-                LogMessage(string.Format("[3/4] Injecting offline credentials for '{0}' (RAM: {1} MB)...", nickname, ramMb));
-                string uuid = Guid.NewGuid().ToString("N");
-                string json = "{\n  \"accounts\": [\n    {\n      \"active\": true,\n      \"entitlement\": {\n        \"canPlayMinecraft\": true,\n        \"ownsMinecraft\": true\n      },\n      \"profile\": {\n        \"capes\": [],\n        \"id\": \"" + uuid + "\",\n        \"name\": \"" + nickname + "\"\n      },\n      \"type\": \"Offline\",\n      \"ygg\": {\n        \"extra\": {\n          \"clientToken\": \"" + uuid + "\",\n          \"userName\": \"" + nickname + "\"\n        },\n        \"iat\": 0,\n        \"token\": \"offline_token\"\n      }\n    }\n  ],\n  \"formatVersion\": 3\n}";
-                
-                string accDir = Path.GetDirectoryName(accountsJson);
-                if (!Directory.Exists(accDir)) Directory.CreateDirectory(accDir);
-                File.WriteAllText(accountsJson, json, Encoding.UTF8);
+                if (!Regex.IsMatch(nickname, @"^[A-Za-z0-9_]{3,16}$"))
+                    throw new ArgumentException("Use a nickname of 3-16 letters, numbers or underscores.");
+                foreach (Process existing in Process.GetProcessesByName("elyprismlauncher")) {
+                    existing.Dispose();
+                    throw new InvalidOperationException("Close PineconeMC first, then press Play again so it can load your selected profile.");
+                }
+                LogMessage(string.Format("[3/4] Preparing offline profile for '{0}' (RAM: {1} MB)...", nickname, ramMb));
+                WriteOfflineAccount(accountsJson, nickname);
+                if (baseInstallPath == "GLOBAL") {
+                    SetConfigValue(instanceCfg, "OverrideMemory", "true");
+                    SetConfigValue(instanceCfg, "MaxMemAlloc", ramMb.ToString());
+                }
 
                 // Launch game (strictly --launch without --server)
                 LogMessage("[4/4] Launching NeoForge 1.21.1 game engine...");
@@ -889,8 +902,8 @@ namespace PrimordialLauncher {
                     lblGameSession.Visible = true;
                     UpdateActionButton();
 
-                    LogMessage(string.Format("Game spawned (PID: {0}). Loading 25 NeoForge mods...", gameProcess.Id));
-                    LogMessage("Game window will appear in ~15-25 seconds.");
+                    LogMessage(string.Format("PineconeMC started (PID: {0}). Preparing Minecraft...", gameProcess.Id));
+                    LogMessage("Startup progress and any Minecraft errors appear in PineconeMC.");
 
                     if (!chkKeepOpen.Checked) {
                         this.WindowState = FormWindowState.Minimized;
@@ -915,7 +928,7 @@ namespace PrimordialLauncher {
                 try { exitCode = gameProcess.ExitCode; } catch { }
 
                 TimeSpan span = DateTime.Now - sessionStartTime;
-                LogMessage(string.Format("Game session finished. Duration: {0:D2}m {1:D2}s.",
+                LogMessage(string.Format("PineconeMC process finished. Duration: {0:D2}m {1:D2}s.",
                     span.Minutes, span.Seconds));
 
                 if (this.WindowState == FormWindowState.Minimized) {

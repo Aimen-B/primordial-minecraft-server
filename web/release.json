@@ -1,0 +1,18 @@
+{
+    "minecraft":  "1.21.1",
+    "neoforge":  "21.1.252",
+    "schema":  1,
+    "version":  "1.0.1",
+    "assets":  {
+                   "PrimordialLauncher.exe":  {
+                                                  "url":  "https://github.com/Aimen-B/primordial-minecraft-server/releases/download/v1.0.1/PrimordialLauncher.exe",
+                                                  "sha256":  "c917352974b85ead3a5cbb4edc55ba659e9550b26075722c834a7f15b2aac3b7",
+                                                  "size":  49664
+                                              },
+                   "Primordial-Adventures-Portable.zip":  {
+                                                              "url":  "https://github.com/Aimen-B/primordial-minecraft-server/releases/download/v1.0.1/Primordial-Adventures-Portable.zip",
+                                                              "sha256":  "72828a0e8d5fff30d5996e7b9aef177e6b99000bf3eaf839aede7be542da9675",
+                                                              "size":  1709440425
+                                                          }
+               }
+}

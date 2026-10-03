@@ -1,175 +1,60 @@
+﻿param([string]$Version = '1.0.1')
 $ErrorActionPreference = 'Stop'
-
-Write-Host "=========================================================="
-Write-Host " Building Primordial Adventures Portable Pack for Friends "
-Write-Host "=========================================================="
-
-$root = "D:\minecraft\adventure"
-$distDir = Join-Path $root "portable-build\Primordial-Adventures-Portable"
-$zipPath = Join-Path $root "Primordial-Adventures-Portable.zip"
-
-if (Test-Path $distDir) {
-    Write-Host "Cleaning previous build folder..."
-    Remove-Item -Recurse -Force $distDir
+$root = Split-Path $PSScriptRoot -Parent
+$buildRoot = Join-Path $root 'portable-build'
+$distDir = Join-Path $buildRoot ('Primordial-' + $Version + '-' + (Get-Date -Format 'yyyyMMddHHmmss'))
+New-Item -ItemType Directory -Path $distDir | Out-Null
+$launcher = Join-Path $distDir 'launcher'
+$game = Join-Path $launcher 'instances\Primordial-Adventures\.minecraft'
+New-Item -ItemType Directory -Force $game,(Join-Path $game 'mods') | Out-Null
+$launcherSrc = Join-Path $env:LOCALAPPDATA 'Programs\ElyPrismLauncher'
+Copy-Item -Path (Join-Path $launcherSrc '*') -Destination $launcher -Recurse
+foreach ($private in @('accounts.json','elyprismlauncher.cfg','launcher_config.ini')) {
+    $candidate = Join-Path $launcher $private
+    if (Test-Path -LiteralPath $candidate) { Remove-Item -LiteralPath $candidate }
 }
-
-New-Item -ItemType Directory -Force (Join-Path $distDir "launcher") | Out-Null
-New-Item -ItemType Directory -Force (Join-Path $distDir "java") | Out-Null
-New-Item -ItemType Directory -Force (Join-Path $distDir "instances") | Out-Null
-
-# 1. Copy ElyPrism Launcher Binaries
-Write-Host "Copying ElyPrism Launcher binaries..."
-$launcherSrc = "$env:LOCALAPPDATA\Programs\ElyPrismLauncher"
-Copy-Item -Path "$launcherSrc\*" -Destination (Join-Path $distDir "launcher") -Recurse -Force
-
-# Mark launcher as portable
-Set-Content -Path (Join-Path $distDir "launcher\portable.txt") -Value ""
-
-# Copy base configuration & assets from AppData so no downloading is needed
-$appDataSrc = "$env:APPDATA\ElyPrismLauncher"
-foreach ($sub in @("assets", "libraries", "meta", "catpacks", "icons", "iconthemes", "themes")) {
-    $srcPath = Join-Path $appDataSrc $sub
-    if (Test-Path $srcPath) {
-        Write-Host "Copying $sub..."
-        Copy-Item -Path $srcPath -Destination (Join-Path $distDir "launcher\$sub") -Recurse -Force
-    }
+Set-Content (Join-Path $launcher 'portable.txt') ''
+Set-Content (Join-Path $launcher 'elyprismlauncher.cfg') "[General]`nLanguage=en_US`nConfigVersion=1.3`nSelectedInstance=Primordial-Adventures`nInstanceDir=instances`nMinMemAlloc=512`nMaxMemAlloc=4096`nShowConsole=true"
+$publicData = Join-Path $env:APPDATA 'ElyPrismLauncher'
+foreach ($sub in @('assets','libraries','meta')) {
+    Copy-Item -LiteralPath (Join-Path $publicData $sub) -Destination $launcher -Recurse
 }
-
-# Copy base launcher config
-if (Test-Path (Join-Path $appDataSrc "elyprismlauncher.cfg")) {
-    Copy-Item -Path (Join-Path $appDataSrc "elyprismlauncher.cfg") -Destination (Join-Path $distDir "launcher\elyprismlauncher.cfg") -Force
-    (Get-Content (Join-Path $distDir "launcher\elyprismlauncher.cfg")) -replace '^SelectedInstance=.*', 'SelectedInstance=Primordial-Adventures' | Set-Content (Join-Path $distDir "launcher\elyprismlauncher.cfg")
+New-Item -ItemType Directory -Force (Join-Path $distDir 'java') | Out-Null
+Copy-Item -LiteralPath (Join-Path (Split-Path $root -Parent) 'runtime\jdk-21.0.12.1+1') -Destination (Join-Path $distDir 'java\jdk-21.0.12.1+1') -Recurse
+$instance = Split-Path $game -Parent
+Copy-Item -LiteralPath (Join-Path $root 'pack\mmc-pack.json'),(Join-Path $root 'pack\instance.cfg') -Destination $instance
+Add-Content (Join-Path $instance 'instance.cfg') "OverrideJavaLocation=true`nJavaPath=../../../../java/jdk-21.0.12.1+1/bin/javaw.exe"
+Copy-Item -LiteralPath (Join-Path $root 'pack\config') -Destination $game -Recurse
+Copy-Item -LiteralPath (Join-Path $root 'pack\options.txt'),(Join-Path $root 'pack\servers.dat') -Destination $game
+$lock = Get-Content (Join-Path $root 'pack\mods.lock.json') -Raw | ConvertFrom-Json
+foreach ($mod in $lock.mods) {
+    if ($mod.client -eq 'unsupported') { continue }
+    $source = Join-Path $root ('downloads\' + $mod.filename)
+    if ((Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash -ne $mod.sha256) { throw "Checksum failed: $($mod.name)" }
+    Copy-Item -LiteralPath $source -Destination (Join-Path $game 'mods')
 }
-
-# Create default offline account
-$defaultAcc = @{ accounts = @( @{ active = $true; entitlement = @{ canPlayMinecraft = $true; ownsMinecraft = $true }; profile = @{ capes = @(); id = [Guid]::NewGuid().ToString('N'); name = 'Player' }; type = 'Offline' } ); formatVersion = 3 }
-$defaultAcc | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $distDir "launcher\accounts.json") -Encoding UTF8
-
-# 2. Copy Bundled Java 21 Runtime
-Write-Host "Copying Java 21 Runtime..."
-$javaSrc = "D:\minecraft\runtime\jdk-21.0.12.1+1"
-Copy-Item -Path $javaSrc -Destination (Join-Path $distDir "java\jdk-21.0.12.1+1") -Recurse -Force
-
-# 3. Copy Pre-configured Instance to BOTH launcher\instances and instances
-Write-Host "Copying Primordial Adventures instance..."
-$instanceSrc = "$appDataSrc\instances\Primordial-Adventures"
-Copy-Item -Path $instanceSrc -Destination (Join-Path $distDir "instances\Primordial-Adventures") -Recurse -Force
-Copy-Item -Path $instanceSrc -Destination (Join-Path $distDir "launcher\instances\Primordial-Adventures") -Recurse -Force
-
-# Copy updated servers.dat to instance
-Copy-Item -Path (Join-Path $root "pack\servers.dat") -Destination (Join-Path $distDir "instances\Primordial-Adventures\.minecraft\servers.dat") -Force
-Copy-Item -Path (Join-Path $root "pack\servers.dat") -Destination (Join-Path $distDir "launcher\instances\Primordial-Adventures\.minecraft\servers.dat") -Force
-
-# Copy PrimordialLauncher.exe if available
-if (Test-Path (Join-Path $root "PrimordialLauncher.exe")) {
-    Copy-Item -Path (Join-Path $root "PrimordialLauncher.exe") -Destination (Join-Path $distDir "PrimordialLauncher.exe") -Force
+Copy-Item -LiteralPath (Join-Path $root 'PrimordialLauncher.exe') -Destination $distDir
+Set-Content (Join-Path $distDir 'Play.cmd') "@echo off`r`ncd /d `"%~dp0`"`r`nstart `"`" `"%~dp0PrimordialLauncher.exe`"" -Encoding ASCII
+Set-Content (Join-Path $distDir 'README-HOW-TO-PLAY.txt') "Primordial Adventures $Version`nRun PrimordialLauncher.exe. Use the exact nickname approved by the host.`nStart with 4 GB RAM. Join mc.primordial.my from Multiplayer.`nFirst join: /register <password> <password>. Later: /login <password>."
+Set-Content (Join-Path $distDir 'pack-version.txt') $Version
+$files = Get-ChildItem -LiteralPath $distDir -Recurse -File | ForEach-Object {
+    [ordered]@{ path = $_.FullName.Substring($distDir.Length + 1).Replace('\','/'); sha256 = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant() }
 }
-
-# 4. Create 1-Click Launch Script with Nickname Prompt
-Write-Host "Creating Play.cmd..."
-$playCmdContent = @'
-@echo off
-setlocal EnableDelayedExpansion
-cd /d "%~dp0"
-title Primordial Adventures
-
-set "NICK_FILE=%~dp0player_name.txt"
-set "SAVED_NICK="
-
-if exist "%NICK_FILE%" (
-    set /p SAVED_NICK=<"%NICK_FILE%"
-)
-
-cls
-echo ==========================================================
-echo               PRIMORDIAL ADVENTURES
-echo ==========================================================
-echo.
-
-if not "!SAVED_NICK!"=="" (
-    echo Playing as: !SAVED_NICK!
-    echo.
-    set /p "USER_INPUT=Press [ENTER] to play, or type a new name: "
-    if "!USER_INPUT!"=="" (
-        set "NICK=!SAVED_NICK!"
-    ) else (
-        set "NICK=!USER_INPUT!"
-    )
-) else (
-    set /p "NICK=Enter your player nickname: "
-)
-
-:: Sanitize input (remove spaces)
-set "NICK=!NICK: =!"
-if "!NICK!"=="" set "NICK=Player"
-echo !NICK!> "%NICK_FILE%"
-
-echo.
-echo ==========================================================
-echo Launching game as "!NICK!"...
-echo Connecting to mc.primordial.my...
-echo ==========================================================
-echo.
-
-:: Automatically configure Java and inject offline account for this nickname
-powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-    "$nick = '%NICK%';" ^
-    "$java = ('%~dp0java\jdk-21.0.12.1+1\bin\javaw.exe').Replace('\','/');" ^
-    "$cfgs = @('%~dp0launcher\instances\Primordial-Adventures\instance.cfg', '%~dp0instances\Primordial-Adventures\instance.cfg');" ^
-    "foreach ($c in $cfgs) { if (Test-Path $c) { (Get-Content $c) -replace '^JavaPath=.*', ('JavaPath=' + $java) | Set-Content $c } };" ^
-    "$uuid = [Guid]::NewGuid().ToString('N');" ^
-    "$acc = @{ accounts = @( @{ active = $true; entitlement = @{ canPlayMinecraft = $true; ownsMinecraft = $true }; profile = @{ capes = @(); id = $uuid; name = $nick }; type = 'Offline'; ygg = @{ token = 'offline_token'; extra = @{ clientToken = $uuid; userName = $nick }; iat = 0 } } ); formatVersion = 3 };" ^
-    "$acc | ConvertTo-Json -Depth 5 | Set-Content '%~dp0launcher\accounts.json' -Encoding UTF8;"
-
-:: Launch Minecraft
-start "" "%~dp0launcher\elyprismlauncher.exe" --launch "Primordial-Adventures"
-
-timeout /t 3 /nobreak >nul
-exit
-'@
-Set-Content -Path (Join-Path $distDir "Play.cmd") -Value $playCmdContent -Encoding ASCII
-
-# 5. Create README Guide for Friends
-Write-Host "Creating README-HOW-TO-PLAY.txt..."
-$readmeContent = @'
-================================================================
-            PRIMORDIAL ADVENTURES - QUICK START GUIDE
-================================================================
-
-NO PURCHASE OR MOJANG ACCOUNT REQUIRED TO PLAY!
-
-1. HOW TO START:
-   - Double-click "Play.cmd".
-   
-2. IF ASKED FOR AN ACCOUNT:
-   - Click "Accounts" in the top-right corner of the launcher.
-   - Click "Add Offline" (or Ely.by if you have an Ely skin account).
-   - Type your desired username and click OK.
-
-3. LAUNCHING THE GAME:
-   - Click "Launch" on Primordial Adventures.
-   
-4. JOINING THE SERVER:
-   - Click "Multiplayer".
-   - You will see two pre-saved servers:
-     * "Primordial Online (mc.primordial.my)" -> For playing online together.
-     * "Primordial Local (127.0.0.1:25567)"   -> For local network testing.
-   - Double-click the server to join!
-
-5. IN-GAME REGISTRATION (FIRST TIME ONLY):
-   - When you join, your character will be protected by a password system.
-   - Press 'T' to open chat.
-   - Type: /register <password> <password>
-     Example: /register secret123 secret123
-   - On future visits, just type: /login <password>
-
-================================================================
-'@
-Set-Content -Path (Join-Path $distDir "README-HOW-TO-PLAY.txt") -Value $readmeContent -Encoding UTF8
-
-# 6. Create Zip Distribution
-Write-Host "Creating zip package: $zipPath..."
-if (Test-Path $zipPath) { Remove-Item -Force $zipPath }
-Compress-Archive -Path "$distDir\*" -DestinationPath $zipPath -CompressionLevel Optimal
-
-Write-Host "Done! Portable client package ready at: $zipPath"
+@{ version=$Version; files=@($files) } | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $distDir 'package-files.json')
+$releaseDir = Join-Path $buildRoot ('release-' + $Version)
+New-Item -ItemType Directory -Force $releaseDir | Out-Null
+$zip = Join-Path $releaseDir 'Primordial-Adventures-Portable.zip'
+if (Test-Path -LiteralPath $zip) { throw "Release output already exists: $zip" }
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+[IO.Compression.ZipFile]::CreateFromDirectory($distDir,$zip,[IO.Compression.CompressionLevel]::Optimal,$false)
+Copy-Item -LiteralPath (Join-Path $root 'PrimordialLauncher.exe') -Destination $releaseDir
+$assets = @{}
+foreach ($name in @('PrimordialLauncher.exe','Primordial-Adventures-Portable.zip')) {
+    $file = Get-Item (Join-Path $releaseDir $name)
+    $hash = (Get-FileHash $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+    $assets[$name] = @{ url="https://github.com/Aimen-B/primordial-minecraft-server/releases/download/v$Version/$name"; size=$file.Length; sha256=$hash }
+    "$hash  $name" | Add-Content (Join-Path $releaseDir 'SHA256SUMS.txt')
+}
+@{ schema=1; version=$Version; minecraft='1.21.1'; neoforge='21.1.252'; assets=$assets } | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $releaseDir 'release.json')
+Write-Output "Built $distDir"
+Write-Output "Release files: $releaseDir"

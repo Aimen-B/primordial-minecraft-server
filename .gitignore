@@ -19,3 +19,8 @@ server/crash-reports/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+launcher_config.ini
+*.primordial.bak
+primordial-session.json
+
