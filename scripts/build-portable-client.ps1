@@ -53,26 +53,67 @@ Copy-Item -Path $instanceSrc -Destination (Join-Path $distDir "instances\Primord
 # Copy updated servers.dat to instance
 Copy-Item -Path (Join-Path $root "pack\servers.dat") -Destination (Join-Path $distDir "instances\Primordial-Adventures\.minecraft\servers.dat") -Force
 
-# 4. Create 1-Click Launch Script
+# 4. Create 1-Click Launch Script with Nickname Prompt
 Write-Host "Creating Play.cmd..."
 $playCmdContent = @'
 @echo off
-setlocal
+setlocal EnableDelayedExpansion
 cd /d "%~dp0"
-title Primordial Adventures Launcher
+title Primordial Adventures
 
+set "NICK_FILE=%~dp0player_name.txt"
+set "SAVED_NICK="
+
+if exist "%NICK_FILE%" (
+    set /p SAVED_NICK=<"%NICK_FILE%"
+)
+
+cls
 echo ==========================================================
-echo          Starting Primordial Adventures Client
+echo               PRIMORDIAL ADVENTURES
 echo ==========================================================
 echo.
 
-:: Configure relative Java 21 path dynamically
-set "JAVA_EXE=%~dp0java\jdk-21.0.12.1+1\bin\javaw.exe"
-set "JAVA_CFG=%JAVA_EXE:\=/%"
-powershell -NoProfile -Command "(Get-Content 'instances\Primordial-Adventures\instance.cfg') -replace '^JavaPath=.*', ('JavaPath=' + '%JAVA_CFG%') | Set-Content 'instances\Primordial-Adventures\instance.cfg'"
+if not "!SAVED_NICK!"=="" (
+    echo Playing as: !SAVED_NICK!
+    echo.
+    set /p "USER_INPUT=Press [ENTER] to play, or type a new name: "
+    if "!USER_INPUT!"=="" (
+        set "NICK=!SAVED_NICK!"
+    ) else (
+        set "NICK=!USER_INPUT!"
+    )
+) else (
+    set /p "NICK=Enter your player nickname: "
+)
 
-:: Launch directly into Primordial Adventures
-start "" "%~dp0launcher\elyprismlauncher.exe" --launch "Primordial-Adventures"
+:: Sanitize input (remove spaces)
+set "NICK=!NICK: =!"
+if "!NICK!"=="" set "NICK=Player"
+echo !NICK!> "%NICK_FILE%"
+
+echo.
+echo ==========================================================
+echo Launching game as "!NICK!"...
+echo Connecting to mc.primordial.my...
+echo ==========================================================
+echo.
+
+:: Automatically configure Java and inject offline account for this nickname
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+    "$nick = '%NICK%';" ^
+    "$java = ('%~dp0java\jdk-21.0.12.1+1\bin\javaw.exe').Replace('\','/');" ^
+    "$cfg = '%~dp0instances\Primordial-Adventures\instance.cfg';" ^
+    "if (Test-Path $cfg) { (Get-Content $cfg) -replace '^JavaPath=.*', ('JavaPath=' + $java) | Set-Content $cfg };" ^
+    "$uuid = [Guid]::NewGuid().ToString('N');" ^
+    "$acc = @{ accounts = @( @{ active = $true; entitlement = @{ canPlayMinecraft = $true; ownsMinecraft = $true }; profile = @{ capes = @(); id = $uuid; name = $nick }; type = 'Offline' } ); formatVersion = 3 };" ^
+    "$acc | ConvertTo-Json -Depth 5 | Set-Content '%~dp0launcher\accounts.json' -Encoding UTF8;"
+
+:: Launch Minecraft and auto-connect
+start "" "%~dp0launcher\elyprismlauncher.exe" --launch "Primordial-Adventures" --server "mc.primordial.my:25565"
+
+timeout /t 3 /nobreak >nul
+exit
 '@
 Set-Content -Path (Join-Path $distDir "Play.cmd") -Value $playCmdContent -Encoding ASCII
 
