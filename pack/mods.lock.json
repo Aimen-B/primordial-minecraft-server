@@ -1,0 +1,447 @@
+{
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.252",
+  "mods": [
+    {
+      "name": "Simply Swords",
+      "slug": "simply-swords",
+      "project_id": "bK3Ubu9p",
+      "version_id": "nS0Yahr5",
+      "version": "1.70.2-1.21.1",
+      "filename": "simplyswords-neoforge-1.70.2-1.21.1.jar",
+      "url": "https://cdn.modrinth.com/data/bK3Ubu9p/versions/nS0Yahr5/simplyswords-neoforge-1.70.2-1.21.1.jar",
+      "sha256": "5e75bd66ea489079d60c9c1ed98762550fbc0bee88cd7af399f17bbeb56608c3",
+      "client": "required",
+      "server": "required",
+      "dependencies": [
+        {
+          "version_id": null,
+          "project_id": "hYykXjDp",
+          "file_name": null,
+          "dependency_type": "required"
+        },
+        {
+          "version_id": null,
+          "project_id": "6avVoBVB",
+          "file_name": null,
+          "dependency_type": "required"
+        },
+        {
+          "version_id": null,
+          "project_id": "5sy6g3kz",
+          "file_name": null,
+          "dependency_type": "optional"
+        },
+        {
+          "version_id": null,
+          "project_id": "lhGA9TYQ",
+          "file_name": null,
+          "dependency_type": "required"
+        }
+      ],
+      "source": "modrinth"
+    },
+    {
+      "name": "Fzzy Config",
+      "slug": "fzzy-config",
+      "project_id": "hYykXjDp",
+      "version_id": "uG7oHgw6",
+      "version": "0.7.7+1.21+neoforge",
+      "filename": "fzzy_config-0.7.7+1.21+neoforge.jar",
+      "url": "https://cdn.modrinth.com/data/hYykXjDp/versions/uG7oHgw6/fzzy_config-0.7.7%2B1.21%2Bneoforge.jar",
+      "sha256": "26af871cacd134ce52610384bbdd362a018707444eb2d498e4833063f378cf85",
+      "client": "required",
+      "server": "required",
+      "dependencies": [
+        {
+          "version_id": null,
+          "project_id": "ordsPcFz",
+          "file_name": null,
+          "dependency_type": "required"
+        }
+      ],
+      "source": "modrinth"
+    },
+    {
+      "name": "Kotlin for Forge",
+      "slug": "kotlin-for-forge",
+      "project_id": "ordsPcFz",
+      "version_id": "uhJhCT7X",
+      "version": "5.12.0",
+      "filename": "kotlinforforge-5.12.0-all.jar",
+      "url": "https://cdn.modrinth.com/data/ordsPcFz/versions/uhJhCT7X/kotlinforforge-5.12.0-all.jar",
+      "sha256": "2785a4dd6de5c6c56065fd8eb789c82771bd2ee773c30794c23160a3b2c39139",
+      "client": "optional",
+      "server": "optional",
+      "dependencies": [],
+      "source": "modrinth"
+    },
+    {
+      "name": "Simply Tooltips",
+      "slug": "simply-tooltips",
+      "project_id": "6avVoBVB",
+      "version_id": "Zb6dytvm",
+      "version": "0.1.5",
+      "filename": "SimplyTooltips-neoforge-0.1.5.jar",
+      "url": "https://cdn.modrinth.com/data/6avVoBVB/versions/Zb6dytvm/SimplyTooltips-neoforge-0.1.5.jar",
+      "sha256": "fdac367da1c5243ac5225f00f831b786817452ee9fa6a7f4acd99ec819b0f2b7",
+      "client": "required",
+      "server": "unsupported",
+      "dependencies": [
+        {
+          "version_id": null,
+          "project_id": "hYykXjDp",
+          "file_name": null,
+          "dependency_type": "required"
+        },
+        {
+          "version_id": null,
+          "project_id": "lhGA9TYQ",
+          "file_name": null,
+          "dependency_type": "required"
+        }
+      ],
+      "source": "modrinth"
+    },
+    {
+      "name": "Architectury API",
+      "slug": "architectury-api",
+      "project_id": "lhGA9TYQ",
+      "version_id": "1IiqEQGl",
+      "version": "13.0.11+neoforge",
+      "filename": "architectury-13.0.11-neoforge.jar",
+      "url": "https://cdn.modrinth.com/data/lhGA9TYQ/versions/1IiqEQGl/architectury-13.0.11-neoforge.jar",
+      "sha256": "9cc92f2c09533fc5482c60f993bd891c655a0e32b637037cdcb7c2b23adedeeb",
+      "client": "required",
+      "server": "required",
+      "dependencies": [],
+      "source": "modrinth"
+    },
+    {
+      "name": "Better Combat",
+      "slug": "better-combat",
+      "project_id": "5sy6g3kz",
+      "version_id": "VhIOvcXP",
+      "version": "2.4.0+1.21.1-neoforge",
+      "filename": "bettercombat-neoforge-2.4.0+1.21.1.jar",
+      "url": "https://cdn.modrinth.com/data/5sy6g3kz/versions/VhIOvcXP/bettercombat-neoforge-2.4.0%2B1.21.1.jar",
+      "sha256": "0446e9faa98b764ba010ac31e337d14ac96bbb2fbfeff9b599e1efd510dfde5a",
+      "client": "required",
+      "server": "required",
+      "dependencies": [
+        {
+          "version_id": null,
+          "project_id": "9s6osm5g",
+          "file_name": null,
+          "dependency_type": "required"
+        },
+        {
+          "version_id": null,
+          "project_id": "gedNE4y2",
+          "file_name": null,
+          "dependency_type": "required"
+        }
+      ],
+      "source": "modrinth"
+    },
+    {
+      "name": "Cloth Config API",
+      "slug": "cloth-config",
+      "project_id": "9s6osm5g",
+      "version_id": "izKINKFg",
+      "version": "15.0.140+neoforge",
+      "filename": "cloth-config-15.0.140-neoforge.jar",
+      "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/izKINKFg/cloth-config-15.0.140-neoforge.jar",
+      "sha256": "65e722e0d98431a07c45f8bdd8d529a217cc8c175fde1740248bd5c1b4f3c0d4",
+      "client": "optional",
+      "server": "optional",
+      "dependencies": [],
+      "source": "modrinth"
+    },
+    {
+      "name": "playerAnimator",
+      "slug": "playeranimator",
+      "project_id": "gedNE4y2",
+      "version_id": "HJZB6bmA",
+      "version": "2.0.4+1.21.1-forge",
+      "filename": "player-animation-lib-forge-2.0.4+1.21.1.jar",
+      "url": "https://cdn.modrinth.com/data/gedNE4y2/versions/HJZB6bmA/player-animation-lib-forge-2.0.4%2B1.21.1.jar",
+      "sha256": "dbe5de45f5cd60c0e5e47af14e6d564534a98456e973cf670cb881f6938eee92",
+      "client": "required",
+      "server": "required",
+      "dependencies": [
+        {
+          "version_id": null,
+          "project_id": "aRnIEV0F",
+          "file_name": null,
+          "dependency_type": "optional"
+        }
+      ],
+      "source": "modrinth"
+    },
+    {
+      "name": "Combat Roll",
+      "slug": "combat-roll",
+      "project_id": "wGKYL7st",
+      "version_id": "FT7t1n1a",
+      "version": "2.0.6+1.21.1-neoforge",
+      "filename": "combat_roll-neoforge-2.0.6+1.21.1.jar",
+      "url": "https://cdn.modrinth.com/data/wGKYL7st/versions/FT7t1n1a/combat_roll-neoforge-2.0.6%2B1.21.1.jar",
+      "sha256": "4904ae4c392d51c431c915822d817de608fd524632021ce417a17ce1a0185f17",
+      "client": "required",
+      "server": "required",
+      "dependencies": [
+        {
+          "version_id": null,
+          "project_id": "9s6osm5g",
+          "file_name": null,
+          "dependency_type": "required"
+        },
+        {
+          "version_id": null,
+          "project_id": "gedNE4y2",
+          "file_name": null,
+          "dependency_type": "required"
+        }
+      ],
+      "source": "modrinth"
+    },
+    {
+      "name": "When Dungeons Arise",
+      "slug": "when-dungeons-arise",
+      "project_id": "8DfbfASn",
+      "version_id": "XIRJSFQ0",
+      "version": "2.1.68",
+      "filename": "DungeonsArise-1.21.1-2.1.68-release.jar",
+      "url": "https://cdn.modrinth.com/data/8DfbfASn/versions/XIRJSFQ0/DungeonsArise-1.21.1-2.1.68-release.jar",
+      "sha256": "7eee1eca7e3b2c6c1bede055934f391ae2e8349ffe33e106f451176d2cfcf0e4",
+      "client": "unsupported",
+      "server": "required",
+      "dependencies": [],
+      "source": "modrinth"
+    },
+    {
+      "name": "Lootr",
+      "slug": "lootr",
+      "project_id": "EltpO5cN",
+      "version_id": "SPOrIzX8",
+      "version": "1.21.1-1.11.38.127",
+      "filename": "lootr-neoforge-1.21.1-1.11.38.127.jar",
+      "url": "https://cdn.modrinth.com/data/EltpO5cN/versions/SPOrIzX8/lootr-neoforge-1.21.1-1.11.38.127.jar",
+      "sha256": "5c74de4709d1c13b25880fdd241a89d5d9f331346d20edc76f80ccd4d99dc66c",
+      "client": "required",
+      "server": "required",
+      "dependencies": [],
+      "source": "modrinth"
+    },
+    {
+      "name": "Waystones",
+      "slug": "waystones",
+      "project_id": "LOpKHB2A",
+      "version_id": "6Z6MQ6os",
+      "version": "21.1.46+neoforge-1.21.1",
+      "filename": "waystones-neoforge-1.21.1-21.1.46.jar",
+      "url": "https://cdn.modrinth.com/data/LOpKHB2A/versions/6Z6MQ6os/waystones-neoforge-1.21.1-21.1.46.jar",
+      "sha256": "ca76a4457160e8353b1f013a21ab377b264141f466d84ec8952a123058b8af78",
+      "client": "required",
+      "server": "required",
+      "dependencies": [
+        {
+          "version_id": null,
+          "project_id": "MBAkmtvl",
+          "file_name": null,
+          "dependency_type": "required"
+        }
+      ],
+      "source": "modrinth"
+    },
+    {
+      "name": "Balm",
+      "slug": "balm",
+      "project_id": "MBAkmtvl",
+      "version_id": "CquiaiDj",
+      "version": "21.0.66+neoforge-1.21.1",
+      "filename": "balm-neoforge-1.21.1-21.0.66.jar",
+      "url": "https://cdn.modrinth.com/data/MBAkmtvl/versions/CquiaiDj/balm-neoforge-1.21.1-21.0.66.jar",
+      "sha256": "6be660e1f6d169553bf44f66d4f78bb9e96a1d66ce108d9608819e3ce6bfba34",
+      "client": "optional",
+      "server": "optional",
+      "dependencies": [],
+      "source": "modrinth"
+    },
+    {
+      "name": "You're in Grave Danger",
+      "slug": "yigd",
+      "project_id": "HnD1GX6e",
+      "version_id": "Axk4bfXT",
+      "version": "2.0.13",
+      "filename": "youre-in-grave-danger-neoforge-2.0.13.jar",
+      "url": "https://cdn.modrinth.com/data/HnD1GX6e/versions/Axk4bfXT/youre-in-grave-danger-neoforge-2.0.13.jar",
+      "sha256": "dd2142a3c6a9d5b990ab36220be482f7aa9f528755f93b8fef8996f509ddcda2",
+      "client": "required",
+      "server": "required",
+      "dependencies": [
+        {
+          "version_id": null,
+          "project_id": "9s6osm5g",
+          "file_name": null,
+          "dependency_type": "required"
+        }
+      ],
+      "source": "modrinth"
+    },
+    {
+      "name": "Geckolib",
+      "slug": "geckolib",
+      "project_id": "8BmcQJ2H",
+      "version_id": "Grwn5rUB",
+      "version": "4.9.3",
+      "filename": "geckolib-neoforge-1.21.1-4.9.3.jar",
+      "url": "https://cdn.modrinth.com/data/8BmcQJ2H/versions/Grwn5rUB/geckolib-neoforge-1.21.1-4.9.3.jar",
+      "sha256": "20a1995e4074f387ff549e2c57ea79dd7d41ee83c6afb9dd6a6e840e592d1c47",
+      "client": "required",
+      "server": "optional",
+      "dependencies": [],
+      "source": "modrinth"
+    },
+    {
+      "name": "Curios API",
+      "slug": "curios",
+      "project_id": "vvuO3ImH",
+      "version_id": "yohfFbgD",
+      "version": "9.5.1+1.21.1",
+      "filename": "curios-neoforge-9.5.1+1.21.1.jar",
+      "url": "https://cdn.modrinth.com/data/vvuO3ImH/versions/yohfFbgD/curios-neoforge-9.5.1%2B1.21.1.jar",
+      "sha256": "a45df2125c26219974aba7507ffc9afe7b83acc941a386af3faacb1cc0056fde",
+      "client": "required",
+      "server": "required",
+      "dependencies": [],
+      "source": "modrinth"
+    },
+    {
+      "name": "Iron's Lib",
+      "slug": "irons-lib",
+      "project_id": "9nfaJPtX",
+      "version_id": "lUwUKYPl",
+      "version": "1.21.1-2.2.0",
+      "filename": "irons_lib-1.21.1-2.2.0.jar",
+      "url": "https://cdn.modrinth.com/data/9nfaJPtX/versions/lUwUKYPl/irons_lib-1.21.1-2.2.0.jar",
+      "sha256": "9e086a4d449147baad6468b11fd34924a905d9cb6818c962676aa0c4589dcc3c",
+      "client": "required",
+      "server": "required",
+      "dependencies": [],
+      "source": "modrinth"
+    },
+    {
+      "name": "Just Enough Items (JEI)",
+      "slug": "jei",
+      "project_id": "u6dRKJwZ",
+      "version_id": "ufHUqt9b",
+      "version": "19.51.0.418",
+      "filename": "jei-1.21.1-neoforge-19.51.0.418.jar",
+      "url": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/ufHUqt9b/jei-1.21.1-neoforge-19.51.0.418.jar",
+      "sha256": "8bc3936d869e4040a5649c58b7e8be1c78c82a245c0dc07bdd68ab49121a222c",
+      "client": "optional",
+      "server": "optional",
+      "dependencies": [],
+      "source": "modrinth"
+    },
+    {
+      "name": "FerriteCore",
+      "slug": "ferrite-core",
+      "project_id": "uXXizFIs",
+      "version_id": "x7kQWVju",
+      "version": "7.0.3-neoforge",
+      "filename": "ferritecore-7.0.3-neoforge.jar",
+      "url": "https://cdn.modrinth.com/data/uXXizFIs/versions/x7kQWVju/ferritecore-7.0.3-neoforge.jar",
+      "sha256": "d87ea28262715ebff45b8a82d493e6b468e7a4521bc021df5d88302196d030a8",
+      "client": "optional",
+      "server": "optional",
+      "dependencies": [],
+      "source": "modrinth"
+    },
+    {
+      "name": "ModernFix",
+      "slug": "modernfix",
+      "project_id": "nmDcB62a",
+      "version_id": "5HLHxQ2F",
+      "version": "5.27.24+mc1.21.1",
+      "filename": "modernfix-neoforge-5.27.24+mc1.21.1.jar",
+      "url": "https://cdn.modrinth.com/data/nmDcB62a/versions/5HLHxQ2F/modernfix-neoforge-5.27.24%2Bmc1.21.1.jar",
+      "sha256": "e6e9446890f0feb3aab3f6e73ae18cb17575c370f232179fef7baa30e61538fe",
+      "client": "optional",
+      "server": "optional",
+      "dependencies": [],
+      "source": "modrinth"
+    },
+    {
+      "name": "Sodium",
+      "slug": "sodium",
+      "project_id": "AANobbMI",
+      "version_id": "uMOpc5uV",
+      "version": "mc1.21.1-0.8.13-neoforge",
+      "filename": "sodium-neoforge-0.8.13+mc1.21.1.jar",
+      "url": "https://cdn.modrinth.com/data/AANobbMI/versions/uMOpc5uV/sodium-neoforge-0.8.13%2Bmc1.21.1.jar",
+      "sha256": "575d187b15328d7bddd8a9b1bee64333c22c14735f5780ec49eac0cd5503c08d",
+      "client": "required",
+      "server": "unsupported",
+      "dependencies": [],
+      "source": "modrinth"
+    },
+    {
+      "name": "Iron's Spells 'n Spellbooks",
+      "source": "curseforge",
+      "project_id": 855414,
+      "file_id": 8680204,
+      "filename": "irons_spellbooks-1.21.1-3.16.3.jar",
+      "url": "https://edge.forgecdn.net/files/8680/204/irons_spellbooks-1.21.1-3.16.3.jar",
+      "sha256": "13d644474ddba4f8478b4ce68294687fd509c994b3f344a224142b102dbe6f73",
+      "client": "required",
+      "server": "required"
+    },
+    {
+      "name": "FTB Quests",
+      "source": "curseforge",
+      "project_id": 289412,
+      "file_id": 8885017,
+      "filename": "ftb-quests-neoforge-2101.1.36.jar",
+      "url": "https://edge.forgecdn.net/files/8885/17/ftb-quests-neoforge-2101.1.36.jar",
+      "sha256": "6a39982c4b3afc00b1e788041a4f0d394e1659e3b3a6e5d078cd790bc36d0018",
+      "client": "required",
+      "server": "required"
+    },
+    {
+      "name": "FTB Library",
+      "source": "curseforge",
+      "project_id": 404465,
+      "file_id": 9008089,
+      "filename": "ftb-library-neoforge-2101.1.37.jar",
+      "url": "https://edge.forgecdn.net/files/9008/89/ftb-library-neoforge-2101.1.37.jar",
+      "sha256": "624c2d2d1cbadb946d967e17757bd5b2d129d4d3ed71f2da0c70607d04476ac2",
+      "client": "required",
+      "server": "required"
+    },
+    {
+      "name": "FTB Teams",
+      "source": "curseforge",
+      "project_id": 404468,
+      "file_id": 8724782,
+      "filename": "ftb-teams-neoforge-2101.1.11.jar",
+      "url": "https://edge.forgecdn.net/files/8724/782/ftb-teams-neoforge-2101.1.11.jar",
+      "sha256": "e6bcd670493624e6906df872a9c6af4a33fe6405cac57a32c59cd4cd5838c655",
+      "client": "required",
+      "server": "required"
+    },
+    {
+      "name": "FTB Essentials",
+      "source": "curseforge",
+      "project_id": 410811,
+      "file_id": 8442866,
+      "filename": "ftb-essentials-neoforge-2101.1.10.jar",
+      "url": "https://edge.forgecdn.net/files/8442/866/ftb-essentials-neoforge-2101.1.10.jar",
+      "sha256": "a61de1b883ec9d6d652276f453e8e60b18bd315fef8c62f21d6545260d526587",
+      "client": "required",
+      "server": "required"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+	id: "73e9bcf3-2395-3374-935a-4d833921293f"
+	type: "player"
+	player_name: "AdventureTest"
+	ranks: {
+		73e9bcf3-2395-3374-935a-4d833921293f: "owner"
+	}
+	properties: {
+		"ftbteams:display_name": "AdventureTest"
+		"ftbteams:description": ""
+		"ftbteams:color": "#59FFE1"
+		"ftbteams:free_to_join": 0b
+		"ftbteams:max_msg_history_size": 1000
+		"ftbteams:team_stages": [ ]
+		"ftbteams:lives_remaining": 0
+	}
+	message_history: [ ]
+	extra: { }
+}

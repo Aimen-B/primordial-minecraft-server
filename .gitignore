@@ -1,0 +1,21 @@
+# Distribution archives (too large for git)
+*.zip
+*.tar.gz
+*.partial
+
+# Portable client build outputs
+portable-build/
+backups/
+downloads/
+verification/
+
+# Runtime locks & logs
+server/.run.lock
+server/world/session.lock
+server/logs/
+server/crash-reports/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store

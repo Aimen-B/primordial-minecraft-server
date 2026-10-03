@@ -1,0 +1,51 @@
+{
+  "id": "1000000000000002",
+  "order_index": 2,
+  "icon": {
+    "id": "minecraft:enchanted_book"
+  },
+  "quests": [
+    {
+      "id": "2000000000000201",
+      "x": 0.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:enchanted_book"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000201",
+          "type": "checkmark"
+        }
+      ]
+    },
+    {
+      "id": "2000000000000202",
+      "x": 3.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:enchanted_book"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000202",
+          "type": "checkmark"
+        }
+      ]
+    },
+    {
+      "id": "2000000000000203",
+      "x": 6.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:enchanted_book"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000203",
+          "type": "checkmark"
+        }
+      ]
+    }
+  ]
+}

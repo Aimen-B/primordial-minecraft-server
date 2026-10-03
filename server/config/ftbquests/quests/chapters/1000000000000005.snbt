@@ -1,0 +1,51 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: ""
+	group: ""
+	icon: {
+		id: "minecraft:recovery_compass"
+	}
+	id: "1000000000000005"
+	images: [ ]
+	order_index: 4
+	quest_links: [ ]
+	quests: [
+		{
+			icon: {
+				id: "minecraft:recovery_compass"
+			}
+			id: "2000000000000501"
+			tasks: [{
+				id: "3000000000000501"
+				type: "checkmark"
+			}]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			icon: {
+				id: "minecraft:recovery_compass"
+			}
+			id: "2000000000000502"
+			tasks: [{
+				id: "3000000000000502"
+				type: "checkmark"
+			}]
+			x: 3.0d
+			y: 0.0d
+		}
+		{
+			icon: {
+				id: "minecraft:recovery_compass"
+			}
+			id: "2000000000000503"
+			tasks: [{
+				id: "3000000000000503"
+				type: "checkmark"
+			}]
+			x: 6.0d
+			y: 0.0d
+		}
+	]
+}

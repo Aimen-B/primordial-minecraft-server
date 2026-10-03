@@ -1,0 +1,51 @@
+{
+  "id": "1000000000000003",
+  "order_index": 3,
+  "icon": {
+    "id": "minecraft:iron_sword"
+  },
+  "quests": [
+    {
+      "id": "2000000000000301",
+      "x": 0.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:iron_sword"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000301",
+          "type": "checkmark"
+        }
+      ]
+    },
+    {
+      "id": "2000000000000302",
+      "x": 3.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:iron_sword"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000302",
+          "type": "checkmark"
+        }
+      ]
+    },
+    {
+      "id": "2000000000000303",
+      "x": 6.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:iron_sword"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000303",
+          "type": "checkmark"
+        }
+      ]
+    }
+  ]
+}

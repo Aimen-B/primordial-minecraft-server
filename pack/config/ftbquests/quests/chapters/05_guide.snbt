@@ -1,0 +1,51 @@
+{
+  "id": "1000000000000005",
+  "order_index": 5,
+  "icon": {
+    "id": "minecraft:recovery_compass"
+  },
+  "quests": [
+    {
+      "id": "2000000000000501",
+      "x": 0.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:recovery_compass"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000501",
+          "type": "checkmark"
+        }
+      ]
+    },
+    {
+      "id": "2000000000000502",
+      "x": 3.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:recovery_compass"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000502",
+          "type": "checkmark"
+        }
+      ]
+    },
+    {
+      "id": "2000000000000503",
+      "x": 6.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:recovery_compass"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000503",
+          "type": "checkmark"
+        }
+      ]
+    }
+  ]
+}

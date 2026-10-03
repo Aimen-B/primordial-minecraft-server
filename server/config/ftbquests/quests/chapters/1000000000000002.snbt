@@ -1,0 +1,51 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: ""
+	group: ""
+	icon: {
+		id: "minecraft:enchanted_book"
+	}
+	id: "1000000000000002"
+	images: [ ]
+	order_index: 1
+	quest_links: [ ]
+	quests: [
+		{
+			icon: {
+				id: "minecraft:enchanted_book"
+			}
+			id: "2000000000000201"
+			tasks: [{
+				id: "3000000000000201"
+				type: "checkmark"
+			}]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			icon: {
+				id: "minecraft:enchanted_book"
+			}
+			id: "2000000000000202"
+			tasks: [{
+				id: "3000000000000202"
+				type: "checkmark"
+			}]
+			x: 3.0d
+			y: 0.0d
+		}
+		{
+			icon: {
+				id: "minecraft:enchanted_book"
+			}
+			id: "2000000000000203"
+			tasks: [{
+				id: "3000000000000203"
+				type: "checkmark"
+			}]
+			x: 6.0d
+			y: 0.0d
+		}
+	]
+}

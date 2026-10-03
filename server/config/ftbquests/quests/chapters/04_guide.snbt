@@ -1,0 +1,51 @@
+{
+  "id": "1000000000000004",
+  "order_index": 4,
+  "icon": {
+    "id": "minecraft:compass"
+  },
+  "quests": [
+    {
+      "id": "2000000000000401",
+      "x": 0.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:compass"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000401",
+          "type": "checkmark"
+        }
+      ]
+    },
+    {
+      "id": "2000000000000402",
+      "x": 3.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:compass"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000402",
+          "type": "checkmark"
+        }
+      ]
+    },
+    {
+      "id": "2000000000000403",
+      "x": 6.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:compass"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000403",
+          "type": "checkmark"
+        }
+      ]
+    }
+  ]
+}

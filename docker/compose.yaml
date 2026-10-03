@@ -1,0 +1,20 @@
+services:
+  minecraft:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: primordial-minecraft
+    restart: unless-stopped
+    ports:
+      - "25565:25565/tcp"
+    environment:
+      - JVM_OPTS=-Xms4G -Xmx6G
+      - TZ=UTC
+    volumes:
+      - ./data/world:/server/world
+      - ./data/config:/server/config
+      - ./data/mods:/server/mods
+      - ./data/server.properties:/server/server.properties
+      - ./data/ops.json:/server/ops.json
+    stdin_open: true
+    tty: true

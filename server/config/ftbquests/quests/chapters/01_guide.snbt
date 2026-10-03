@@ -1,0 +1,51 @@
+{
+  "id": "1000000000000001",
+  "order_index": 1,
+  "icon": {
+    "id": "minecraft:crafting_table"
+  },
+  "quests": [
+    {
+      "id": "2000000000000101",
+      "x": 0.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:crafting_table"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000101",
+          "type": "checkmark"
+        }
+      ]
+    },
+    {
+      "id": "2000000000000102",
+      "x": 3.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:crafting_table"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000102",
+          "type": "checkmark"
+        }
+      ]
+    },
+    {
+      "id": "2000000000000103",
+      "x": 6.0,
+      "y": 0.0,
+      "icon": {
+        "id": "minecraft:crafting_table"
+      },
+      "tasks": [
+        {
+          "id": "3000000000000103",
+          "type": "checkmark"
+        }
+      ]
+    }
+  ]
+}
