@@ -8,9 +8,9 @@ echo "=========================================================="
 # Ensure EULA is accepted
 echo "eula=true" > /server/eula.txt
 
-# Default memory settings if not set
+# Default memory settings if not set (safe for 4GB-8GB VPS)
 if [ -z "$JVM_OPTS" ]; then
-    JVM_OPTS="-Xms4G -Xmx6G"
+    JVM_OPTS="-Xms2G -Xmx4G"
 fi
 echo "Using JVM Options: $JVM_OPTS"
 
