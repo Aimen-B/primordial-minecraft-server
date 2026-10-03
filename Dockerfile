@@ -26,6 +26,7 @@ COPY server/user_jvm_args.txt ./
 COPY server/eula.txt ./
 COPY server/server.properties ./
 COPY server/ops.json ./
+COPY server/whitelist.json ./
 COPY server/world ./world
 
 # Copy Web Landing Page and Launcher download
@@ -36,6 +37,6 @@ COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Volumes for persistent state
-VOLUME ["/server/world", "/server/config", "/server/mods", "/server/logs"]
+VOLUME ["/server/world", "/server/config", "/server/mods", "/server/logs", "/server/backups"]
 
 ENTRYPOINT ["/entrypoint.sh"]

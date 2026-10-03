@@ -60,3 +60,39 @@ Click **Deploy**. Dokploy will:
 ## 4. Player Joining & Downloads
 * **Website:** Visitors go to `https://minecraft.primordial.my` to view the server status and download `PrimordialLauncher.exe`.
 * **Game Connection:** Minecraft connects directly to `mc.primordial.my` (or `mc.primordial.my:25565`).
+
+---
+
+## 5. Security, Anti-Griefing & Whitelist Management
+
+To prevent internet bots and scanners (Copenheimer, Shodan, Masscan) from joining and ruining your world:
+
+### 🛡️ Built-in Protections:
+1. **Strict Whitelist (`white-list=true`):** 
+   - No unknown player or bot can connect. The server drops unauthorized connections during the handshake before they can even load the world.
+   - `Primordial` is already pre-authorized in `whitelist.json`.
+2. **Account Passwords (`NefAUTH`):**
+   - Even if someone spoofs a whitelisted username, they cannot move, break blocks, or access items without entering `/login <password>`.
+3. **Spawn Protection (`spawn-protection=16`):**
+   - The 16-block radius around world spawn cannot be broken by non-operators.
+4. **Automated Docker Snapshots:**
+   - The Docker container automatically saves a compressed `.tar.gz` world backup every 2 hours to `/server/backups/`, keeping the last 5 snapshots for instant rollback.
+
+### 👥 How to Add Friends:
+* **Option A (In-Game as Primordial):**
+  Press `T` and run:
+  ```mcfunction
+  /whitelist add <FriendNickname>
+  ```
+* **Option B (In Dokploy Console):**
+  Open your service terminal in Dokploy and type:
+  ```bash
+  whitelist add <FriendNickname>
+  ```
+* **Other Useful Security Commands:**
+  ```mcfunction
+  /whitelist list                 # View all permitted players
+  /whitelist remove <name>        # Revoke access immediately
+  /gamerule mobGriefing false     # Prevent creepers from destroying blocks
+  /gamerule doFireTick false      # Prevent fire from spreading and burning houses
+  ```

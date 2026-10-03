@@ -537,6 +537,13 @@ namespace PrimordialLauncher {
             sb.AppendLine("• Spells Menu: Open inventory or press 'V' for spell book");
             sb.AppendLine("• Crafting Recipes: Hover over items in JEI and press 'R'");
             sb.AppendLine("• Death Graves: Your gear is safely stored in a grave at death");
+            sb.AppendLine("=== SECURITY & WHITELIST (ANTI-GRIEF) ===");
+            sb.AppendLine("• Random players cannot join (strict Whitelist enforced).");
+            sb.AppendLine("• Add friend: /whitelist add <nickname>");
+            sb.AppendLine("• List friends: /whitelist list");
+            sb.AppendLine("• Kick/Revoke: /whitelist remove <nickname>");
+            sb.AppendLine("• Prevent fire grief: /gamerule doFireTick false");
+            sb.AppendLine("• Prevent creeper grief: /gamerule mobGriefing false");
             sb.AppendLine();
             sb.AppendLine("=== OPERATOR PRIVILEGES (Primordial) ===");
             sb.AppendLine("• /god            : Toggle complete invulnerability");

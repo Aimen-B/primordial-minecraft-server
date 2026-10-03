@@ -21,6 +21,9 @@ if [ ! -f /server/server.properties ]; then
 server-port=25565
 server-ip=0.0.0.0
 online-mode=false
+white-list=true
+enforce-whitelist=true
+spawn-protection=16
 pvp=false
 difficulty=normal
 max-players=5
@@ -30,13 +33,28 @@ allow-flight=true
 enforce-secure-profile=false
 EOF
 else
-    # Ensure port and online-mode are correct for online docker hosting
+    # Ensure port, online-mode and whitelist security are enforced for docker hosting
     sed -i 's/^server-port=.*/server-port=25565/' /server/server.properties || true
     sed -i 's/^server-ip=.*/server-ip=0.0.0.0/' /server/server.properties || true
     sed -i 's/^online-mode=.*/online-mode=false/' /server/server.properties || true
+    if grep -q "^white-list=" /server/server.properties; then
+        sed -i 's/^white-list=.*/white-list=true/' /server/server.properties
+    else
+        echo "white-list=true" >> /server/server.properties
+    fi
+    if grep -q "^enforce-whitelist=" /server/server.properties; then
+        sed -i 's/^enforce-whitelist=.*/enforce-whitelist=true/' /server/server.properties
+    else
+        echo "enforce-whitelist=true" >> /server/server.properties
+    fi
+    if grep -q "^spawn-protection=" /server/server.properties; then
+        sed -i 's/^spawn-protection=.*/spawn-protection=16/' /server/server.properties
+    else
+        echo "spawn-protection=16" >> /server/server.properties
+    fi
 fi
 
-# Ensure ops.json exists
+# Ensure ops.json exists with Primordial
 if [ ! -f /server/ops.json ]; then
     echo "Creating ops.json with Primordial as Operator..."
     cat <<EOF > /server/ops.json
@@ -50,6 +68,37 @@ if [ ! -f /server/ops.json ]; then
 ]
 EOF
 fi
+
+# Ensure whitelist.json exists with Primordial pre-authorized
+if [ ! -f /server/whitelist.json ] || [ ! -s /server/whitelist.json ] || [ "$(cat /server/whitelist.json 2>/dev/null)" = "[]" ]; then
+    echo "Configuring whitelist.json with Primordial..."
+    cat <<EOF > /server/whitelist.json
+[
+  {
+    "uuid": "31e2c49d-c4c2-39eb-94e0-3bfea8cfa448",
+    "name": "Primordial"
+  }
+]
+EOF
+fi
+
+# Start automated background world backup routine (runs every 2 hours, keeps last 5 snapshots)
+mkdir -p /server/backups
+backup_routine() {
+    while true; do
+        sleep 7200
+        if [ -d /server/world ]; then
+            TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+            BACKUP_FILE="/server/backups/world_backup_${TIMESTAMP}.tar.gz"
+            echo "[AutoBackup] Saving world snapshot to ${BACKUP_FILE}..."
+            tar -czf "${BACKUP_FILE}" -C /server world 2>/dev/null || true
+            # Keep only the 5 most recent backups
+            ls -t /server/backups/world_backup_*.tar.gz 2>/dev/null | tail -n +6 | xargs -r rm -f
+            echo "[AutoBackup] Snapshot complete. World is safe."
+        fi
+    done
+}
+backup_routine > /server/backup.log 2>&1 &
 
 # Start background web server for minecraft.primordial.my on port 8080
 if [ -d /server/web ]; then
