@@ -1,20 +1,23 @@
 # Dokploy & Docker Online Hosting Guide
 
-This guide explains how to deploy **Primordial Adventures** on Dokploy or any Docker-enabled VPS, and connect your domain `mc.primordial.my`.
+This guide explains how to deploy **Primordial Adventures** on Dokploy or any Docker-enabled VPS, configure game connections on `mc.primordial.my`, and serve the web showcase on `minecraft.primordial.my`.
 
 ---
 
 ## 1. Domain & DNS Configuration
-In your DNS provider (e.g., Cloudflare, Namecheap, or domain registrar for `primordial.my`):
-* **Record Type**: `A`
-* **Name / Host**: `mc`
-* **Target / IP**: `<Your-VPS-Public-IP>`
-* **Proxy Status**: **DNS Only / Gray Cloud** (⚠️ Turn Cloudflare Proxy **OFF**, as Minecraft uses raw TCP on port 25565, not HTTP/HTTPS).
+In your DNS provider (e.g. Cloudflare or domain registrar for `primordial.my`), add two DNS A records:
+
+| Record Type | Name / Subdomain | Target IP | Proxy Status (Cloudflare) | Purpose |
+| :--- | :--- | :--- | :--- | :--- |
+| **A** | `mc` | `<Your-VPS-IP>` | **DNS Only** (Gray cloud / Off) | Minecraft Game Connection (Port 25565) |
+| **A** | `minecraft` | `<Your-VPS-IP>` | **Proxied** (Orange cloud / On) | Web Landing Page & Launcher Download |
+
+> ⚠️ **Important:** Keep Cloudflare proxy **OFF** for `mc` because Minecraft uses raw TCP packets on port 25565. Cloudflare proxy can be **ON** for `minecraft` because it is an HTTPS website.
 
 ---
 
 ## 2. Firewall / Port Forwarding
-Ensure TCP port **25565** is open on your server:
+Ensure TCP port **25565** is open on your VPS firewall:
 * On Ubuntu VPS (UFW):
   ```bash
   sudo ufw allow 25565/tcp
@@ -25,48 +28,35 @@ Ensure TCP port **25565** is open on your server:
 
 ---
 
-## 3. Deploying on Dokploy
+## 3. Configuring Dokploy (Application Service)
 
-### Option A: Via Dokploy Compose Project
-1. Log into your **Dokploy** web dashboard.
-2. Navigate to **Projects** -> Create a new project named `Minecraft`.
-3. Click **Add Service** -> Select **Compose**.
-4. Paste the contents of `docker/compose.yaml`.
-5. Under environment variables or compose configuration, ensure the port mapping is `25565:25565/tcp`.
-6. Deploy the service.
+Your single Docker service runs **both** the Minecraft server and the web download hub:
 
-### Option B: Direct Docker Deployment (CLI)
-If deploying directly on the VPS via terminal:
-```bash
-# Clone or copy the adventure folder to /opt/minecraft
-cd /opt/minecraft/docker
+### A. Ports Tab (for Minecraft)
+1. In Dokploy, go to your service -> **Ports** tab.
+2. Click **Add Port**:
+   * **Published Port:** `25565`
+   * **Target Port:** `25565`
+   * **Protocol:** `TCP`
+3. Click **Save**.
 
-# Run via Docker Compose
-docker compose up -d --build
-```
+### B. Domains Tab (for the Minecraft Website & Downloads)
+1. In Dokploy, go to your service -> **Domains** tab.
+2. Click **Add Domain**:
+   * **Host:** `minecraft.primordial.my`
+   * **Path:** `/`
+   * **Container Port:** `8080`
+   * **HTTPS:** **Enabled** (Let's Encrypt SSL)
+3. Click **Save**.
 
----
-
-## 4. Migrating Local World & Player Passwords
-To bring your existing local world, player accounts, and inventory to Dokploy:
-1. Stop the Docker container:
-   ```bash
-   docker compose down
-   ```
-2. Copy these folders from your local `D:\minecraft\adventure\server` to the server's `./data` directory:
-   * `world/` (saves map progress, buildings, chests, advancements)
-   * `config/forgelogin/users.properties` (preserves player registered passwords)
-   * `ops.json` (preserves OP permissions for `Primordial`)
-3. Restart the container:
-   ```bash
-   docker compose up -d
-   ```
+### C. Deploy
+Click **Deploy**. Dokploy will:
+* Build the container with all 25 mods and the web landing page.
+* Run Minecraft NeoForge on port `25565`.
+* Run the lightweight web server on port `8080` with automatic HTTPS on `minecraft.primordial.my`.
 
 ---
 
-## 5. Joining Online
-Your friends will join directly using:
-```
-mc.primordial.my
-```
-(No port number required, because it uses the default Minecraft port 25565).
+## 4. Player Joining & Downloads
+* **Website:** Visitors go to `https://minecraft.primordial.my` to view the server status and download `PrimordialLauncher.exe`.
+* **Game Connection:** Minecraft connects directly to `mc.primordial.my` (or `mc.primordial.my:25565`).

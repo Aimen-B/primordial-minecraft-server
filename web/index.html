@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Primordial Adventures - Minecraft Modded Server</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="logo">
+        ⚔️ PRIMORDIAL <span class="logo-badge">NeoForge 1.21.1</span>
+      </div>
+      <div>
+        <a href="#how-to-play" style="color: var(--text-muted); text-decoration: none; font-weight: 600; margin-right: 20px;">Guide</a>
+        <a href="#features" style="color: var(--text-muted); text-decoration: none; font-weight: 600;">Modpack</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-tag">✨ Private Co-op Adventure Server</div>
+      <h1>Magic, Weapons & Dungeons</h1>
+      <p>A hand-crafted cooperative survival experience with spellcasting, custom weaponry, massive dungeons, and individual loot.</p>
+
+      <!-- Server IP Badge -->
+      <div class="server-box">
+        <div class="status-dot" id="statusDot"></div>
+        <div class="server-ip" id="serverIp">mc.primordial.my</div>
+        <button class="copy-btn" onclick="copyIp()" id="copyBtn">Copy IP</button>
+        <span id="playerCount" style="color: var(--text-muted); font-size: 0.85rem; margin-left: 8px;">Checking...</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="cta-group">
+        <a href="/PrimordialLauncher.exe" class="btn btn-primary" download>
+          🚀 Download Launcher (.exe)
+        </a>
+        <a href="https://github.com/Aimen-B/primordial-minecraft-server/releases/download/v1.0.0/Primordial-Adventures-Portable.zip" class="btn btn-secondary">
+          📦 Download Full ZIP (1.6 GB)
+        </a>
+      </div>
+      <div class="cta-subtext">Zero setup required • No Mojang or Microsoft account needed</div>
+    </div>
+  </section>
+
+  <!-- How to Play Steps -->
+  <section class="steps-section" id="how-to-play">
+    <div class="container">
+      <h2 class="section-title">How To Join In 3 Easy Steps</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3>Download Launcher</h3>
+          <p>Download <strong>PrimordialLauncher.exe</strong> above. It is a lightweight, portable launcher with zero dependencies.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3>Enter Your Nickname</h3>
+          <p>Open the launcher, type whatever in-game nickname you want, and click <strong>PLAY NOW</strong>. (The launcher auto-downloads game files if needed!)</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3>Join & Register</h3>
+          <p>Click Multiplayer, select <strong>Primordial Online</strong>, and type <code>/register &lt;password&gt; &lt;password&gt;</code> in chat to protect your account!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modpack Highlights -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <h2 class="section-title">What's in the Modpack?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔮</div>
+          <h3>Iron's Spells 'n Spellbooks</h3>
+          <p>Master 10+ schools of magic, craft powerful spellbooks, inscribe scrolls, and cast spells without choosing rigid character classes.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚔️</div>
+          <h3>Simply Swords & Better Combat</h3>
+          <p>Wield spears, katanas, glaives, and greathammers with fluid attack sequences, combos, dual-wielding, and a tactical combat roll.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏰</div>
+          <h3>When Dungeons Arise</h3>
+          <p>Explore colossal roguelike dungeons, sky ships, and underground fortresses designed specifically for multiplayer expeditions.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💎</div>
+          <h3>Lootr (Personal Chests)</h3>
+          <p>Every player gets their own individual loot from every dungeon chest. Never fight your friends over who opens the chest first!</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🗿</div>
+          <h3>Waystones & Safe Graves</h3>
+          <p>Discover waystones to fast-travel back to each other. On death, your items are safely stored in a protected recoverable grave.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>FTB Essentials & Utilities</h3>
+          <p>Enjoy convenient commands like <code>/home</code>, <code>/sethome</code>, <code>/spawn</code>, and <code>/tpa</code> to easily meet up with your group.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>Primordial Adventures • NeoForge 1.21.1 Modpack • Powered by Dokploy</p>
+    </div>
+  </footer>
+
+  <script>
+    function copyIp() {
+      navigator.clipboard.writeText("mc.primordial.my");
+      const btn = document.getElementById("copyBtn");
+      btn.innerText = "Copied!";
+      setTimeout(() => { btn.innerText = "Copy IP"; }, 2000);
+    }
+
+    // Live Server Ping via public mcstatus API
+    async function checkServer() {
+      try {
+        const res = await fetch("https://api.mcstatus.io/v2/status/java/mc.primordial.my");
+        if (res.ok) {
+          const data = await res.json();
+          const dot = document.getElementById("statusDot");
+          const count = document.getElementById("playerCount");
+          if (data.online) {
+            dot.style.background = "#10b981";
+            dot.style.boxShadow = "0 0 12px #10b981";
+            count.innerText = `Online (${data.players.online}/${data.players.max} Players)`;
+          } else {
+            dot.style.background = "#f59e0b";
+            dot.style.boxShadow = "0 0 12px #f59e0b";
+            count.innerText = "Starting up / Standby";
+          }
+        }
+      } catch (err) {
+        document.getElementById("playerCount").innerText = "Online";
+      }
+    }
+    checkServer();
+  </script>
+</body>
+</html>
