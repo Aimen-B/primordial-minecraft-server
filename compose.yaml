@@ -1,7 +1,7 @@
 services:
   minecraft:
     build:
-      context: ..
+      context: .
       dockerfile: Dockerfile
     container_name: primordial-minecraft
     restart: unless-stopped
@@ -11,10 +11,10 @@ services:
       - JVM_OPTS=-Xms4G -Xmx6G
       - TZ=UTC
     volumes:
-      - ../server/world:/server/world
-      - ../server/config:/server/config
-      - ../server/mods:/server/mods
-      - ../server/server.properties:/server/server.properties
-      - ../server/ops.json:/server/ops.json
+      - ./server/world:/server/world
+      - ./server/config:/server/config
+      - ./server/mods:/server/mods
+      - ./server/server.properties:/server/server.properties
+      - ./server/ops.json:/server/ops.json
     stdin_open: true
     tty: true
