@@ -77,7 +77,8 @@ namespace PrimordialLauncher {
 
         private void InitUI() {
             this.Text = "Primordial Adventures Launcher";
-            this.Size = new Size(760, 560);
+            this.AutoScaleMode = AutoScaleMode.None;
+            this.ClientSize = new Size(800, 580);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -87,8 +88,8 @@ namespace PrimordialLauncher {
 
             // Left Sidebar
             pnlSidebar = new Panel();
-            pnlSidebar.Dock = DockStyle.Left;
-            pnlSidebar.Width = 190;
+            pnlSidebar.Location = new Point(0, 0);
+            pnlSidebar.Size = new Size(200, 580);
             pnlSidebar.BackColor = Color.FromArgb(20, 23, 34);
             this.Controls.Add(pnlSidebar);
 
@@ -131,7 +132,8 @@ namespace PrimordialLauncher {
 
             // Main Content Area
             pnlContent = new Panel();
-            pnlContent.Dock = DockStyle.Fill;
+            pnlContent.Location = new Point(200, 0);
+            pnlContent.Size = new Size(600, 580);
             pnlContent.BackColor = Color.FromArgb(14, 16, 23);
             this.Controls.Add(pnlContent);
 
@@ -158,8 +160,9 @@ namespace PrimordialLauncher {
         private Button CreateNavButton(string text, int top) {
             Button btn = new Button();
             btn.Text = text;
+            btn.UseMnemonic = false;
             btn.Location = new Point(10, top);
-            btn.Size = new Size(170, 40);
+            btn.Size = new Size(180, 40);
             btn.FlatStyle = FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 0;
             btn.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
@@ -198,7 +201,7 @@ namespace PrimordialLauncher {
             // Server Card
             Panel pnlServer = new Panel();
             pnlServer.Location = new Point(25, 20);
-            pnlServer.Size = new Size(505, 75);
+            pnlServer.Size = new Size(550, 75);
             pnlServer.BackColor = Color.FromArgb(22, 26, 38);
             pnlServer.Paint += delegate(object s, PaintEventArgs e) {
                 using (Pen p = new Pen(Color.FromArgb(40, 46, 68), 1)) {
@@ -225,10 +228,11 @@ namespace PrimordialLauncher {
 
             lblServerPing = new Label();
             lblServerPing.Text = "";
-            lblServerPing.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
+            lblServerPing.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
             lblServerPing.ForeColor = Color.FromArgb(148, 163, 184);
-            lblServerPing.Location = new Point(360, 42);
-            lblServerPing.AutoSize = true;
+            lblServerPing.Location = new Point(430, 42);
+            lblServerPing.Size = new Size(100, 20);
+            lblServerPing.TextAlign = ContentAlignment.MiddleRight;
             pnlServer.Controls.Add(lblServerPing);
 
             // Player Profile Input
@@ -243,7 +247,7 @@ namespace PrimordialLauncher {
             txtNickname = new TextBox();
             txtNickname.Font = new Font("Segoe UI", 11f, FontStyle.Regular);
             txtNickname.Location = new Point(25, 136);
-            txtNickname.Size = new Size(260, 27);
+            txtNickname.Size = new Size(270, 27);
             txtNickname.BackColor = Color.FromArgb(28, 33, 48);
             txtNickname.ForeColor = Color.White;
             txtNickname.BorderStyle = BorderStyle.FixedSingle;
@@ -254,14 +258,14 @@ namespace PrimordialLauncher {
             lblRamTitle.Text = "Allocated RAM:";
             lblRamTitle.Font = new Font("Segoe UI", 10f, FontStyle.Bold);
             lblRamTitle.ForeColor = Color.FromArgb(226, 232, 240);
-            lblRamTitle.Location = new Point(310, 110);
+            lblRamTitle.Location = new Point(325, 110);
             lblRamTitle.AutoSize = true;
             tabPlay.Controls.Add(lblRamTitle);
 
             rbRam4G = new RadioButton();
             rbRam4G.Text = "4 GB";
             rbRam4G.Font = new Font("Segoe UI", 9f, FontStyle.Regular);
-            rbRam4G.Location = new Point(310, 138);
+            rbRam4G.Location = new Point(325, 138);
             rbRam4G.AutoSize = true;
             rbRam4G.Checked = true;
             tabPlay.Controls.Add(rbRam4G);
@@ -269,27 +273,27 @@ namespace PrimordialLauncher {
             rbRam6G = new RadioButton();
             rbRam6G.Text = "6 GB";
             rbRam6G.Font = new Font("Segoe UI", 9f, FontStyle.Regular);
-            rbRam6G.Location = new Point(380, 138);
+            rbRam6G.Location = new Point(400, 138);
             rbRam6G.AutoSize = true;
             tabPlay.Controls.Add(rbRam6G);
 
             rbRam8G = new RadioButton();
             rbRam8G.Text = "8 GB";
             rbRam8G.Font = new Font("Segoe UI", 9f, FontStyle.Regular);
-            rbRam8G.Location = new Point(450, 138);
+            rbRam8G.Location = new Point(475, 138);
             rbRam8G.AutoSize = true;
             tabPlay.Controls.Add(rbRam8G);
 
             // Progress bar
             prgAction = new ProgressBar();
             prgAction.Location = new Point(25, 178);
-            prgAction.Size = new Size(505, 14);
+            prgAction.Size = new Size(550, 14);
             prgAction.Visible = false;
             tabPlay.Controls.Add(prgAction);
 
             lblActionStatus = new Label();
             lblActionStatus.Location = new Point(25, 196);
-            lblActionStatus.Size = new Size(505, 18);
+            lblActionStatus.Size = new Size(550, 18);
             lblActionStatus.Font = new Font("Segoe UI", 8.5f, FontStyle.Regular);
             lblActionStatus.ForeColor = Color.FromArgb(148, 163, 184);
             lblActionStatus.TextAlign = ContentAlignment.MiddleCenter;
@@ -299,7 +303,7 @@ namespace PrimordialLauncher {
             // Big Play Button
             btnPlayAction = new Button();
             btnPlayAction.Location = new Point(25, 218);
-            btnPlayAction.Size = new Size(505, 50);
+            btnPlayAction.Size = new Size(550, 50);
             btnPlayAction.FlatStyle = FlatStyle.Flat;
             btnPlayAction.FlatAppearance.BorderSize = 0;
             btnPlayAction.Font = new Font("Segoe UI", 12.5f, FontStyle.Bold);
@@ -310,7 +314,7 @@ namespace PrimordialLauncher {
             // Session duration label
             lblGameSession = new Label();
             lblGameSession.Location = new Point(25, 273);
-            lblGameSession.Size = new Size(505, 20);
+            lblGameSession.Size = new Size(550, 20);
             lblGameSession.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
             lblGameSession.ForeColor = Color.FromArgb(52, 211, 153);
             lblGameSession.TextAlign = ContentAlignment.MiddleCenter;
@@ -328,7 +332,7 @@ namespace PrimordialLauncher {
 
             lstLog = new ListBox();
             lstLog.Location = new Point(25, 322);
-            lstLog.Size = new Size(505, 175);
+            lstLog.Size = new Size(550, 220);
             lstLog.BackColor = Color.FromArgb(19, 21, 31);
             lstLog.ForeColor = Color.FromArgb(203, 213, 225);
             lstLog.BorderStyle = BorderStyle.FixedSingle;
@@ -355,7 +359,7 @@ namespace PrimordialLauncher {
 
             ListView lv = new ListView();
             lv.Location = new Point(25, 60);
-            lv.Size = new Size(505, 435);
+            lv.Size = new Size(550, 485);
             lv.View = View.Details;
             lv.FullRowSelect = true;
             lv.GridLines = true;
@@ -364,9 +368,9 @@ namespace PrimordialLauncher {
             lv.BorderStyle = BorderStyle.FixedSingle;
             lv.Font = new Font("Segoe UI", 9f, FontStyle.Regular);
 
-            lv.Columns.Add("Mod Name", 190);
-            lv.Columns.Add("Category", 95);
-            lv.Columns.Add("Description", 210);
+            lv.Columns.Add("Mod Name", 195);
+            lv.Columns.Add("Category", 100);
+            lv.Columns.Add("Description", 250);
 
             AddModItem(lv, "Iron's Spells 'n Spellbooks", "Magic", "10+ magic schools, spellbooks, mana progression");
             AddModItem(lv, "Simply Swords", "Combat", "Katanas, spears, halberds, unique rare weapons");
@@ -415,7 +419,7 @@ namespace PrimordialLauncher {
             gbRam.Text = "Custom RAM Memory Allocation (MB)";
             gbRam.ForeColor = Color.FromArgb(203, 213, 225);
             gbRam.Location = new Point(25, 60);
-            gbRam.Size = new Size(505, 80);
+            gbRam.Size = new Size(550, 80);
             tabSettings.Controls.Add(gbRam);
 
             numRam = new NumericUpDown();
@@ -430,7 +434,7 @@ namespace PrimordialLauncher {
             gbRam.Controls.Add(numRam);
 
             Label lblRamHelp = new Label();
-            lblRamHelp.Text = "4096 MB (4 GB) is recommended. Use 6144 or 8192 if you have 16 GB+ RAM.";
+            lblRamHelp.Text = "4096 MB (4 GB) is recommended. Use 6144 or 8192 for 16 GB+ PCs.";
             lblRamHelp.ForeColor = Color.FromArgb(148, 163, 184);
             lblRamHelp.Location = new Point(155, 34);
             lblRamHelp.AutoSize = true;
@@ -438,7 +442,7 @@ namespace PrimordialLauncher {
 
             // Behavior
             chkKeepOpen = new CheckBox();
-            chkKeepOpen.Text = "Keep launcher open while playing (shows session time & errors)";
+            chkKeepOpen.Text = "Keep launcher open while playing (shows session time & status)";
             chkKeepOpen.Checked = true;
             chkKeepOpen.Location = new Point(25, 160);
             chkKeepOpen.AutoSize = true;
@@ -448,7 +452,7 @@ namespace PrimordialLauncher {
             Button btnOpenFolder = new Button();
             btnOpenFolder.Text = "📂 Open Game Folder";
             btnOpenFolder.Location = new Point(25, 210);
-            btnOpenFolder.Size = new Size(240, 42);
+            btnOpenFolder.Size = new Size(265, 42);
             btnOpenFolder.FlatStyle = FlatStyle.Flat;
             btnOpenFolder.BackColor = Color.FromArgb(30, 41, 59);
             btnOpenFolder.ForeColor = Color.White;
@@ -461,8 +465,8 @@ namespace PrimordialLauncher {
 
             Button btnOpenLogs = new Button();
             btnOpenLogs.Text = "📋 View Latest Game Log";
-            btnOpenLogs.Location = new Point(290, 210);
-            btnOpenLogs.Size = new Size(240, 42);
+            btnOpenLogs.Location = new Point(310, 210);
+            btnOpenLogs.Size = new Size(265, 42);
             btnOpenLogs.FlatStyle = FlatStyle.Flat;
             btnOpenLogs.BackColor = Color.FromArgb(30, 41, 59);
             btnOpenLogs.ForeColor = Color.White;
@@ -477,7 +481,7 @@ namespace PrimordialLauncher {
             Button btnRepair = new Button();
             btnRepair.Text = "🔄 Re-download / Repair Game Files";
             btnRepair.Location = new Point(25, 270);
-            btnRepair.Size = new Size(505, 42);
+            btnRepair.Size = new Size(550, 42);
             btnRepair.FlatStyle = FlatStyle.Flat;
             btnRepair.BackColor = Color.FromArgb(51, 65, 85);
             btnRepair.ForeColor = Color.FromArgb(248, 113, 113);
@@ -510,7 +514,7 @@ namespace PrimordialLauncher {
             txtCheatSheet.Multiline = true;
             txtCheatSheet.ReadOnly = true;
             txtCheatSheet.Location = new Point(25, 60);
-            txtCheatSheet.Size = new Size(505, 435);
+            txtCheatSheet.Size = new Size(550, 485);
             txtCheatSheet.BackColor = Color.FromArgb(20, 23, 34);
             txtCheatSheet.ForeColor = Color.FromArgb(226, 232, 240);
             txtCheatSheet.Font = new Font("Consolas", 9.5f, FontStyle.Regular);
@@ -562,12 +566,15 @@ namespace PrimordialLauncher {
             string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
             if (File.Exists(Path.Combine(currentDir, "launcher", "elyprismlauncher.exe")) &&
-                Directory.Exists(Path.Combine(currentDir, "instances", "Primordial-Adventures"))) {
+                (Directory.Exists(Path.Combine(currentDir, "launcher", "instances", "Primordial-Adventures")) ||
+                 Directory.Exists(Path.Combine(currentDir, "instances", "Primordial-Adventures")))) {
                 baseInstallPath = currentDir;
                 isGameInstalled = true;
                 LogMessage("Detected portable installation in current directory.");
             }
-            else if (File.Exists(Path.Combine(currentDir, "Primordial-Adventures-Portable", "launcher", "elyprismlauncher.exe"))) {
+            else if (File.Exists(Path.Combine(currentDir, "Primordial-Adventures-Portable", "launcher", "elyprismlauncher.exe")) &&
+                     (Directory.Exists(Path.Combine(currentDir, "Primordial-Adventures-Portable", "launcher", "instances", "Primordial-Adventures")) ||
+                      Directory.Exists(Path.Combine(currentDir, "Primordial-Adventures-Portable", "instances", "Primordial-Adventures")))) {
                 baseInstallPath = Path.Combine(currentDir, "Primordial-Adventures-Portable");
                 isGameInstalled = true;
                 LogMessage("Detected installation in subfolder.");
@@ -834,36 +841,41 @@ namespace PrimordialLauncher {
                 } else {
                     launcherExe = Path.Combine(baseInstallPath, "launcher", "elyprismlauncher.exe");
                     accountsJson = Path.Combine(baseInstallPath, "launcher", "accounts.json");
-                    instanceCfg = Path.Combine(baseInstallPath, "instances", "Primordial-Adventures", "instance.cfg");
+                    string[] targetCfgs = new string[] {
+                        Path.Combine(baseInstallPath, "launcher", "instances", "Primordial-Adventures", "instance.cfg"),
+                        Path.Combine(baseInstallPath, "instances", "Primordial-Adventures", "instance.cfg")
+                    };
 
                     // Set JavaPath and memory in instance.cfg
                     LogMessage("[2/4] Configuring Java 21 runtime...");
                     string bundledJava = Path.Combine(baseInstallPath, "java", "jdk-21.0.12.1+1", "bin", "javaw.exe").Replace('\\', '/');
-                    if (File.Exists(instanceCfg)) {
-                        string cfgContent = File.ReadAllText(instanceCfg);
-                        string[] lines = cfgContent.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
-                        for (int i = 0; i < lines.Length; i++) {
-                            if (lines[i].StartsWith("JavaPath=")) lines[i] = "JavaPath=" + bundledJava;
-                            if (lines[i].StartsWith("MaxMemAlloc=")) lines[i] = "MaxMemAlloc=" + ramMb;
+                    foreach (string targetCfg in targetCfgs) {
+                        if (File.Exists(targetCfg)) {
+                            string cfgContent = File.ReadAllText(targetCfg);
+                            string[] lines = cfgContent.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+                            for (int i = 0; i < lines.Length; i++) {
+                                if (lines[i].StartsWith("JavaPath=")) lines[i] = "JavaPath=" + bundledJava;
+                                if (lines[i].StartsWith("MaxMemAlloc=")) lines[i] = "MaxMemAlloc=" + ramMb;
+                            }
+                            File.WriteAllText(targetCfg, string.Join("\r\n", lines));
                         }
-                        File.WriteAllText(instanceCfg, string.Join("\r\n", lines));
                     }
                 }
 
-                // Write offline account
-                LogMessage(string.Format("[3/4] Injecting offline credentials (RAM: {0} MB)...", ramMb));
+                // Write offline account with complete ygg schema
+                LogMessage(string.Format("[3/4] Injecting offline credentials for '{0}' (RAM: {1} MB)...", nickname, ramMb));
                 string uuid = Guid.NewGuid().ToString("N");
-                string json = "{\n  \"accounts\": [\n    {\n      \"active\": true,\n      \"entitlement\": {\n        \"canPlayMinecraft\": true,\n        \"ownsMinecraft\": true\n      },\n      \"profile\": {\n        \"capes\": [],\n        \"id\": \"" + uuid + "\",\n        \"name\": \"" + nickname + "\"\n      },\n      \"type\": \"Offline\"\n    }\n  ],\n  \"formatVersion\": 3\n}";
+                string json = "{\n  \"accounts\": [\n    {\n      \"active\": true,\n      \"entitlement\": {\n        \"canPlayMinecraft\": true,\n        \"ownsMinecraft\": true\n      },\n      \"profile\": {\n        \"capes\": [],\n        \"id\": \"" + uuid + "\",\n        \"name\": \"" + nickname + "\"\n      },\n      \"type\": \"Offline\",\n      \"ygg\": {\n        \"extra\": {\n          \"clientToken\": \"" + uuid + "\",\n          \"userName\": \"" + nickname + "\"\n        },\n        \"iat\": 0,\n        \"token\": \"offline_token\"\n      }\n    }\n  ],\n  \"formatVersion\": 3\n}";
                 
                 string accDir = Path.GetDirectoryName(accountsJson);
                 if (!Directory.Exists(accDir)) Directory.CreateDirectory(accDir);
                 File.WriteAllText(accountsJson, json, Encoding.UTF8);
 
-                // Launch game
+                // Launch game (strictly --launch without --server)
                 LogMessage("[4/4] Launching NeoForge 1.21.1 game engine...");
                 ProcessStartInfo psi = new ProcessStartInfo();
                 psi.FileName = launcherExe;
-                psi.Arguments = "--launch \"Primordial-Adventures\" --server \"mc.primordial.my:25565\"";
+                psi.Arguments = "--launch \"Primordial-Adventures\"";
                 psi.WorkingDirectory = Path.GetDirectoryName(launcherExe);
                 
                 gameProcess = Process.Start(psi);
@@ -903,17 +915,16 @@ namespace PrimordialLauncher {
                 try { exitCode = gameProcess.ExitCode; } catch { }
 
                 TimeSpan span = DateTime.Now - sessionStartTime;
-                LogMessage(string.Format("Game session finished. Duration: {0:D2}m {1:D2}s (Exit code: {2}).",
-                    span.Minutes, span.Seconds, exitCode));
+                LogMessage(string.Format("Game session finished. Duration: {0:D2}m {1:D2}s.",
+                    span.Minutes, span.Seconds));
 
                 if (this.WindowState == FormWindowState.Minimized) {
                     this.WindowState = FormWindowState.Normal;
                     this.Activate();
                 }
 
-                if (exitCode != 0) {
-                    MessageBox.Show(string.Format("Minecraft closed with exit code {0}.\n\nCheck 'Settings' -> 'View Latest Game Log' for details.", exitCode),
-                        "Game Closed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                if (exitCode != 0 && span.TotalSeconds < 5) {
+                    LogMessage(string.Format("Notice: Process exited with code {0}.", exitCode));
                 }
             }));
         }

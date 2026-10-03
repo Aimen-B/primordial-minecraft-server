@@ -38,20 +38,32 @@ foreach ($sub in @("assets", "libraries", "meta", "catpacks", "icons", "iconthem
 # Copy base launcher config
 if (Test-Path (Join-Path $appDataSrc "elyprismlauncher.cfg")) {
     Copy-Item -Path (Join-Path $appDataSrc "elyprismlauncher.cfg") -Destination (Join-Path $distDir "launcher\elyprismlauncher.cfg") -Force
+    (Get-Content (Join-Path $distDir "launcher\elyprismlauncher.cfg")) -replace '^SelectedInstance=.*', 'SelectedInstance=Primordial-Adventures' | Set-Content (Join-Path $distDir "launcher\elyprismlauncher.cfg")
 }
+
+# Create default offline account
+$defaultAcc = @{ accounts = @( @{ active = $true; entitlement = @{ canPlayMinecraft = $true; ownsMinecraft = $true }; profile = @{ capes = @(); id = [Guid]::NewGuid().ToString('N'); name = 'Player' }; type = 'Offline' } ); formatVersion = 3 }
+$defaultAcc | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $distDir "launcher\accounts.json") -Encoding UTF8
 
 # 2. Copy Bundled Java 21 Runtime
 Write-Host "Copying Java 21 Runtime..."
 $javaSrc = "D:\minecraft\runtime\jdk-21.0.12.1+1"
 Copy-Item -Path $javaSrc -Destination (Join-Path $distDir "java\jdk-21.0.12.1+1") -Recurse -Force
 
-# 3. Copy Pre-configured Instance
+# 3. Copy Pre-configured Instance to BOTH launcher\instances and instances
 Write-Host "Copying Primordial Adventures instance..."
 $instanceSrc = "$appDataSrc\instances\Primordial-Adventures"
 Copy-Item -Path $instanceSrc -Destination (Join-Path $distDir "instances\Primordial-Adventures") -Recurse -Force
+Copy-Item -Path $instanceSrc -Destination (Join-Path $distDir "launcher\instances\Primordial-Adventures") -Recurse -Force
 
 # Copy updated servers.dat to instance
 Copy-Item -Path (Join-Path $root "pack\servers.dat") -Destination (Join-Path $distDir "instances\Primordial-Adventures\.minecraft\servers.dat") -Force
+Copy-Item -Path (Join-Path $root "pack\servers.dat") -Destination (Join-Path $distDir "launcher\instances\Primordial-Adventures\.minecraft\servers.dat") -Force
+
+# Copy PrimordialLauncher.exe if available
+if (Test-Path (Join-Path $root "PrimordialLauncher.exe")) {
+    Copy-Item -Path (Join-Path $root "PrimordialLauncher.exe") -Destination (Join-Path $distDir "PrimordialLauncher.exe") -Force
+}
 
 # 4. Create 1-Click Launch Script with Nickname Prompt
 Write-Host "Creating Play.cmd..."
@@ -103,14 +115,14 @@ echo.
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
     "$nick = '%NICK%';" ^
     "$java = ('%~dp0java\jdk-21.0.12.1+1\bin\javaw.exe').Replace('\','/');" ^
-    "$cfg = '%~dp0instances\Primordial-Adventures\instance.cfg';" ^
-    "if (Test-Path $cfg) { (Get-Content $cfg) -replace '^JavaPath=.*', ('JavaPath=' + $java) | Set-Content $cfg };" ^
+    "$cfgs = @('%~dp0launcher\instances\Primordial-Adventures\instance.cfg', '%~dp0instances\Primordial-Adventures\instance.cfg');" ^
+    "foreach ($c in $cfgs) { if (Test-Path $c) { (Get-Content $c) -replace '^JavaPath=.*', ('JavaPath=' + $java) | Set-Content $c } };" ^
     "$uuid = [Guid]::NewGuid().ToString('N');" ^
-    "$acc = @{ accounts = @( @{ active = $true; entitlement = @{ canPlayMinecraft = $true; ownsMinecraft = $true }; profile = @{ capes = @(); id = $uuid; name = $nick }; type = 'Offline' } ); formatVersion = 3 };" ^
+    "$acc = @{ accounts = @( @{ active = $true; entitlement = @{ canPlayMinecraft = $true; ownsMinecraft = $true }; profile = @{ capes = @(); id = $uuid; name = $nick }; type = 'Offline'; ygg = @{ token = 'offline_token'; extra = @{ clientToken = $uuid; userName = $nick }; iat = 0 } } ); formatVersion = 3 };" ^
     "$acc | ConvertTo-Json -Depth 5 | Set-Content '%~dp0launcher\accounts.json' -Encoding UTF8;"
 
-:: Launch Minecraft and auto-connect
-start "" "%~dp0launcher\elyprismlauncher.exe" --launch "Primordial-Adventures" --server "mc.primordial.my:25565"
+:: Launch Minecraft
+start "" "%~dp0launcher\elyprismlauncher.exe" --launch "Primordial-Adventures"
 
 timeout /t 3 /nobreak >nul
 exit
