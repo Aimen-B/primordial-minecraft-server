@@ -15,12 +15,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Standard Minecraft Server Port
 EXPOSE 25565
 
-# Copy base server runtime files
+# Copy server files
 COPY server/libraries ./libraries
+COPY server/mods ./mods
+COPY server/config ./config
+COPY server/defaultconfigs ./defaultconfigs
 COPY server/user_jvm_args.txt ./
 COPY server/eula.txt ./
+COPY server/server.properties ./
+COPY server/ops.json ./
+COPY server/world ./world
 
-# Copy entrypoint script (supports both root or docker/ folder)
+# Copy entrypoint script
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
