@@ -29,6 +29,7 @@ namespace PrimordialLauncher {
         private Button btnNavPlay;
         private Button btnNavSkins;
         private Button btnNavMods;
+        private Button btnNavWhitelist;
         private Button btnNavSettings;
         private Button btnNavHelp;
 
@@ -128,18 +129,21 @@ namespace PrimordialLauncher {
             btnNavPlay = CreateNavButton("🎮  Play Game", btnY);
             btnNavSkins = CreateNavButton("🎨  Custom Skins", 141);
             btnNavMods = CreateNavButton("📦  Modpack (32)", 187);
-            btnNavSettings = CreateNavButton("⚙️  Settings & RAM", 233);
-            btnNavHelp = CreateNavButton("📖  Guide & Tips", 279);
+            btnNavWhitelist = CreateNavButton("🛡️  Whitelist Friends", 233);
+            btnNavSettings = CreateNavButton("⚙️  Settings & RAM", 279);
+            btnNavHelp = CreateNavButton("📖  Guide & Tips", 325);
 
             btnNavPlay.Click += delegate { SwitchTab(tabPlay, btnNavPlay); };
             btnNavSkins.Click += delegate { SwitchTab(tabSkins, btnNavSkins); };
             btnNavMods.Click += delegate { SwitchTab(tabMods, btnNavMods); };
+            btnNavWhitelist.Click += delegate { SwitchTab(tabWhitelist, btnNavWhitelist); OnWhitelistTabOpened(); };
             btnNavSettings.Click += delegate { SwitchTab(tabSettings, btnNavSettings); };
             btnNavHelp.Click += delegate { SwitchTab(tabHelp, btnNavHelp); };
 
             pnlSidebar.Controls.Add(btnNavPlay);
             pnlSidebar.Controls.Add(btnNavSkins);
             pnlSidebar.Controls.Add(btnNavMods);
+            pnlSidebar.Controls.Add(btnNavWhitelist);
             pnlSidebar.Controls.Add(btnNavSettings);
             pnlSidebar.Controls.Add(btnNavHelp);
 
@@ -154,6 +158,7 @@ namespace PrimordialLauncher {
             BuildPlayTab();
             BuildSkinsTab();
             BuildModsTab();
+            BuildWhitelistTab();
             BuildSettingsTab();
             BuildHelpTab();
 
@@ -192,10 +197,11 @@ namespace PrimordialLauncher {
             tabPlay.Visible = (selectedTab == tabPlay);
             tabSkins.Visible = (selectedTab == tabSkins);
             tabMods.Visible = (selectedTab == tabMods);
+            tabWhitelist.Visible = (selectedTab == tabWhitelist);
             tabSettings.Visible = (selectedTab == tabSettings);
             tabHelp.Visible = (selectedTab == tabHelp);
 
-            Button[] btns = new Button[] { btnNavPlay, btnNavSkins, btnNavMods, btnNavSettings, btnNavHelp };
+            Button[] btns = new Button[] { btnNavPlay, btnNavSkins, btnNavMods, btnNavWhitelist, btnNavSettings, btnNavHelp };
             foreach (Button b in btns) {
                 if (b == activeNavBtn) {
                     b.BackColor = Color.FromArgb(30, 41, 59);

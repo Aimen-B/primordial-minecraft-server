@@ -6,13 +6,13 @@
     "assets": {
         "PrimordialLauncher.exe": {
             "url": "https://github.com/Aimen-B/primordial-minecraft-server/releases/download/v1.2.0/PrimordialLauncher.exe",
-            "sha256": "5078262de5e01159b1d1cf867c0a75ed1365dfff2c0bfc8de4361bf575651467",
-            "size": 92160
+            "sha256": "58f1fff19807940f97e492290dd2ca9ddeb38e91f275d5270102a57a27033370",
+            "size": 102912
         },
         "Primordial-Adventures-Portable.zip": {
             "url": "https://github.com/Aimen-B/primordial-minecraft-server/releases/download/v1.2.0/Primordial-Adventures-Portable.zip",
-            "sha256": "d5c095d0c877c95eb8f8f2f75cc16d15804e54fe9591d1f783ed9aa1e600c144",
-            "size": 1855407878
+            "sha256": "9fd1d9f7f9ebc8ecf8c90c1f1c248f1a8887705671473a210183298ab9003987",
+            "size": 1855411481
         }
     }
 }

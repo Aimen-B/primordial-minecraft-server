@@ -49,8 +49,22 @@ else
     fi
     if grep -q "^spawn-protection=" /server/server.properties; then
         sed -i 's/^spawn-protection=.*/spawn-protection=16/' /server/server.properties
-    else
         echo "spawn-protection=16" >> /server/server.properties
+    fi
+    if grep -q "^enable-rcon=" /server/server.properties; then
+        sed -i 's/^enable-rcon=.*/enable-rcon=true/' /server/server.properties
+    else
+        echo "enable-rcon=true" >> /server/server.properties
+    fi
+    if grep -q "^rcon.password=" /server/server.properties; then
+        sed -i 's/^rcon.password=.*/rcon.password=primordial_rcon_internal/' /server/server.properties
+    else
+        echo "rcon.password=primordial_rcon_internal" >> /server/server.properties
+    fi
+    if grep -q "^rcon.port=" /server/server.properties; then
+        sed -i 's/^rcon.port=.*/rcon.port=25575/' /server/server.properties
+    else
+        echo "rcon.port=25575" >> /server/server.properties
     fi
 fi
 
