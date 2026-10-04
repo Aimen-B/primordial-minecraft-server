@@ -13,8 +13,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     && rm -rf /var/lib/apt/lists/*
 
-# Expose Minecraft Game Port and Web Landing Page Port
+# Expose Minecraft Game Port, Voice Chat UDP, and Web Landing Page Port
 EXPOSE 25565
+EXPOSE 24454/udp
 EXPOSE 8080
 
 # Copy server files
@@ -34,6 +35,7 @@ COPY web ./web
 
 # Copy entrypoint script
 COPY docker/entrypoint.sh /entrypoint.sh
+COPY docker/webserver.py /webserver.py
 RUN chmod +x /entrypoint.sh
 
 # Volumes for persistent state

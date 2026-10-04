@@ -18,7 +18,7 @@ using System.Web.Script.Serialization;
 
 namespace PrimordialLauncher {
     public class LauncherForm : Form {
-        public const string VERSION = "1.0.1";
+        public const string VERSION = "1.1.0";
         private const string SERVER_HOST = "mc.primordial.my";
         private const int SERVER_PORT = 25565;
         private const string CONFIG_FILE = "launcher_config.ini";
@@ -117,7 +117,7 @@ namespace PrimordialLauncher {
             int btnY = 95;
             btnNavPlay = CreateNavButton("🎮  Play Game", btnY);
             btnY += 46;
-            btnNavMods = CreateNavButton("📦  Modpack (25)", btnY);
+            btnNavMods = CreateNavButton("📦  Modpack (30)", btnY);
             btnY += 46;
             btnNavSettings = CreateNavButton("⚙️  Settings & RAM", btnY);
             btnY += 46;
@@ -353,7 +353,7 @@ namespace PrimordialLauncher {
             pnlContent.Controls.Add(tabMods);
 
             Label lblModsHeader = new Label();
-            lblModsHeader.Text = "Included Adventure Mods (25 Total)";
+            lblModsHeader.Text = "Included Adventure Mods (30 Total)";
             lblModsHeader.Font = new Font("Segoe UI", 13f, FontStyle.Bold);
             lblModsHeader.ForeColor = Color.FromArgb(16, 185, 129);
             lblModsHeader.Location = new Point(25, 20);
@@ -391,6 +391,12 @@ namespace PrimordialLauncher {
             AddModItem(lv, "Curios API", "Equipment", "Extra accessory and relic inventory slots");
             AddModItem(lv, "FerriteCore", "Performance", "Reduces Minecraft RAM usage significantly");
             AddModItem(lv, "ModernFix", "Performance", "Supercharged launch times & memory fixes");
+            AddModItem(lv, "Simple Voice Chat", "Audio", "Proximity 3D positional voice chat (V)");
+            AddModItem(lv, "JourneyMap", "Map & Radar", "Live real-time minimap, waypoints, friend radar (J)");
+            AddModItem(lv, "Artifacts", "Exploration", "Rare accessories and baubles found in dungeon chests");
+            AddModItem(lv, "Farmer's Delight", "Cooking", "Cooking pots, hearty meals, feasts, and knife slicing");
+            AddModItem(lv, "SkinRestorer", "Visuals", "Change your in-game skin anytime via /skin command");
+            AddModItem(lv, "Sodium / Embeddium", "Performance", "Next-gen graphics engine for ultra-high FPS");
 
             tabMods.Controls.Add(lv);
         }
@@ -525,6 +531,21 @@ namespace PrimordialLauncher {
             txtCheatSheet.BorderStyle = BorderStyle.FixedSingle;
 
             StringBuilder sb = new StringBuilder();
+            sb.AppendLine("=== SERVER & WHITELIST ===");
+            sb.AppendLine("• Server IP: mc.primordial.my (Port: 25565)");
+            sb.AppendLine("• Web Hub: https://minecraft.primordial.my");
+            sb.AppendLine("• Self-whitelist: Use invite code 'adventure' on the website!");
+            sb.AppendLine();
+            sb.AppendLine("=== PROXIMITY VOICE CHAT ===");
+            sb.AppendLine("• Press 'V' to open voice settings, volume & mic testing");
+            sb.AppendLine("• Push-to-Talk or Voice Activation available in 'V' menu");
+            sb.AppendLine("• Create private whisper groups with friends");
+            sb.AppendLine();
+            sb.AppendLine("=== CUSTOM SKINS (OFFLINE SUPPORT) ===");
+            sb.AppendLine("• /skin <player>  : Copy any player's skin (e.g. /skin Technoblade)");
+            sb.AppendLine("• /skin url <url> : Set custom skin from direct image link");
+            sb.AppendLine("• /skin clear     : Reset to default character skin");
+            sb.AppendLine();
             sb.AppendLine("=== IN-GAME AUTHENTICATION ===");
             sb.AppendLine("• First join: Press 'T' and type:");
             sb.AppendLine("  /register <your_password> <your_password>");
@@ -631,7 +652,7 @@ namespace PrimordialLauncher {
                 btnPlayAction.ForeColor = Color.White;
             } else {
                 btnPlayAction.Enabled = true;
-                btnPlayAction.Text = "📦 DOWNLOAD & INSTALL GAME (1.6 GB)";
+                btnPlayAction.Text = "📦 DOWNLOAD & INSTALL GAME (1.8 GB)";
                 btnPlayAction.BackColor = Color.FromArgb(37, 99, 235); // Blue
                 btnPlayAction.ForeColor = Color.White;
             }

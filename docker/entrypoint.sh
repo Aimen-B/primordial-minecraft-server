@@ -103,7 +103,7 @@ backup_routine > /server/backup.log 2>&1 &
 # Start background web server for minecraft.primordial.my on port 8080
 if [ -d /server/web ]; then
     echo "Starting Web Server on port 8080 for minecraft.primordial.my..."
-    python3 -m http.server 8080 --directory /server/web > /server/web.log 2>&1 &
+    python3 /webserver.py > /server/web.log 2>&1 &
 fi
 
 echo "Launching NeoForge 21.1.252 server on port 25565..."

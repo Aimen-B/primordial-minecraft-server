@@ -41,14 +41,34 @@
 
       <!-- Action Buttons -->
       <div class="cta-group">
-        <a href="https://github.com/Aimen-B/primordial-minecraft-server/releases/latest/download/PrimordialLauncher.exe" class="btn btn-primary" download>
-          🚀 Download Launcher (.exe)
+        <a href="https://github.com/Aimen-B/primordial-minecraft-server/releases/latest/download/Primordial-Adventures-Portable.zip" class="btn btn-primary" download>
+          📦 Download 1-Click Game Bundle (1.8 GB)
         </a>
-        <a href="https://github.com/Aimen-B/primordial-minecraft-server/releases/latest/download/Primordial-Adventures-Portable.zip" class="btn btn-secondary">
-          📦 Download Full ZIP
+        <a href="https://github.com/Aimen-B/primordial-minecraft-server/releases/latest/download/PrimordialLauncher.exe" class="btn btn-secondary" download>
+          ⚡ Standalone Launcher (.exe)
         </a>
       </div>
-      <div class="cta-subtext">Zero setup required • No Mojang or Microsoft account needed</div>
+      <div class="cta-subtext">⭐ <strong>Recommended:</strong> Full ZIP bundle includes Java 21, Launcher & all 30 mods. Extract & play instantly with zero setup!</div>
+
+      <!-- Instant Whitelist Card -->
+      <div class="whitelist-section">
+        <div class="whitelist-card">
+          <div class="whitelist-header">
+            <span style="font-size: 1.4rem;">🎟️</span>
+            <h3>Instant Self-Service Whitelist</h3>
+          </div>
+          <p>Enter your exact Minecraft nickname to whitelist yourself and get instant access to the server:</p>
+          <div class="whitelist-form">
+            <input type="text" id="whitelistName" class="whitelist-input" placeholder="Your Minecraft Nickname" maxlength="16">
+            <input type="text" id="whitelistCode" class="whitelist-input" placeholder="Invite Passcode (e.g. adventure)">
+            <button class="btn-whitelist" onclick="submitWhitelist()" id="btnWhitelist">🔓 Whitelist Me</button>
+          </div>
+          <div id="whitelistResult" class="whitelist-result" style="display: none;"></div>
+          <div class="whitelist-hint">
+            💡 <em>Host link:</em> Share <code>https://minecraft.primordial.my/?invite=adventure</code> with friends to auto-fill the passcode!
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -59,18 +79,18 @@
       <div class="steps-grid">
         <div class="step-card">
           <div class="step-number">1</div>
-          <h3>Download Launcher</h3>
-          <p>Download <strong>PrimordialLauncher.exe</strong> above. It is a lightweight, portable launcher with zero dependencies.</p>
+          <h3>Whitelist Your Name</h3>
+          <p>Type your desired username in the <strong>Whitelist card above</strong> with the invite passcode to get instant access.</p>
         </div>
         <div class="step-card">
           <div class="step-number">2</div>
-          <h3>Enter Your Nickname</h3>
-          <p>Open the launcher, enter the exact nickname approved by the host, and click <strong>PLAY NOW</strong>. (The launcher auto-downloads game files if needed!)</p>
+          <h3>Extract Game Bundle</h3>
+          <p>Download the <strong>1-Click Game Bundle (1.8 GB)</strong> and extract the ZIP anywhere on your PC (e.g., Desktop or Games folder).</p>
         </div>
         <div class="step-card">
           <div class="step-number">3</div>
-          <h3>Join & Register</h3>
-          <p>Click Multiplayer and select <strong>Primordial Online</strong>. Once Primordial whitelists your nickname, type <code>/register &lt;password&gt; &lt;password&gt;</code> in chat to lock your account!</p>
+          <h3>Launch & Play</h3>
+          <p>Run <strong>PrimordialLauncher.exe</strong>, enter your nickname, and click <strong>PLAY NOW</strong>. Connect to <strong>Primordial Online</strong> from Multiplayer!</p>
         </div>
       </div>
     </div>
@@ -79,17 +99,42 @@
   <!-- Modpack Highlights -->
   <section class="features-section" id="features">
     <div class="container">
-      <h2 class="section-title">What's in the Modpack?</h2>
+      <h2 class="section-title">What's in the Adventure Pack? (30 Mods)</h2>
       <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎙️</div>
+          <h3>Simple Voice Chat</h3>
+          <p>Proximity 3D positional audio. Hear friends based on distance and direction, or create private whisper groups with key <code>V</code>.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>Custom Skins (SkinRestorer)</h3>
+          <p>Offline players have full skins! Type <code>/skin &lt;player&gt;</code> (e.g. <code>/skin Technoblade</code>) or <code>/skin url &lt;link&gt;</code> anytime in chat.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🗺️</div>
+          <h3>JourneyMap & Radar</h3>
+          <p>Real-time minimap and full-screen map (press <code>J</code>) tracking nearby terrain, caves, waypoints, and your friends' live locations.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💍</div>
+          <h3>Artifacts & Curios</h3>
+          <p>Unearth dozens of rare magical trinkets, rings, cloaks, and talismans in dungeon chests that grant unique active and passive abilities.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🍳</div>
+          <h3>Farmer's Delight</h3>
+          <p>Cooperative culinary adventures! Cook rich stews, noodles, pies, and banquets using cutting boards, skillets, and cooking pots.</p>
+        </div>
         <div class="feature-card">
           <div class="feature-icon">🔮</div>
           <h3>Iron's Spells 'n Spellbooks</h3>
-          <p>Master 10+ schools of magic, craft powerful spellbooks, inscribe scrolls, and cast spells without choosing rigid character classes.</p>
+          <p>Master 10+ schools of magic, craft powerful spellbooks, inscribe scrolls, and cast destructive or protective spells.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">⚔️</div>
           <h3>Simply Swords & Better Combat</h3>
-          <p>Wield spears, katanas, glaives, and greathammers with fluid attack sequences, combos, dual-wielding, and a tactical combat roll.</p>
+          <p>Wield spears, katanas, glaives, and greathammers with fluid attack sequences, dual-wielding, and a tactical combat roll (<code>R</code>).</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🏰</div>
@@ -108,8 +153,13 @@
         </div>
         <div class="feature-card">
           <div class="feature-icon">⚡</div>
-          <h3>FTB Essentials & Utilities</h3>
-          <p>Enjoy convenient commands like <code>/home</code>, <code>/sethome</code>, <code>/spawn</code>, and <code>/tpa</code> to easily meet up with your group.</p>
+          <h3>FTB Essentials Commands</h3>
+          <p>Enjoy convenient commands like <code>/home</code>, <code>/sethome</code>, <code>/spawn</code>, and <code>/tpa &lt;player&gt;</code> to easily meet up with your group.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <h3>Sodium & ModernFix</h3>
+          <p>Ultra-optimized rendering engine and memory fixes providing smooth 100+ FPS gameplay even on modest laptops.</p>
         </div>
       </div>
     </div>
@@ -123,11 +173,82 @@
   </footer>
 
   <script>
+    // Copy IP
     function copyIp() {
       navigator.clipboard.writeText("mc.primordial.my");
       const btn = document.getElementById("copyBtn");
       btn.innerText = "Copied!";
       setTimeout(() => { btn.innerText = "Copy IP"; }, 2000);
+    }
+
+    // Auto-fill invite code from URL parameters (?invite=adventure or ?code=adventure)
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const invite = params.get("invite") || params.get("code");
+      if (invite) {
+        const codeInput = document.getElementById("whitelistCode");
+        if (codeInput) codeInput.value = invite;
+      }
+    });
+
+    // Whitelist Form Submission
+    async function submitWhitelist() {
+      const nickInput = document.getElementById("whitelistName");
+      const codeInput = document.getElementById("whitelistCode");
+      const resBox = document.getElementById("whitelistResult");
+      const btn = document.getElementById("btnWhitelist");
+
+      const nickname = nickInput.value.trim();
+      const code = codeInput.value.trim();
+
+      if (!nickname) {
+        showResult(false, "Please enter your Minecraft nickname.");
+        nickInput.focus();
+        return;
+      }
+
+      if (!/^[a-zA-Z0-9_]{3,16}$/.test(nickname)) {
+        showResult(false, "Nickname must be 3-16 characters (letters, numbers, underscores only).");
+        nickInput.focus();
+        return;
+      }
+
+      if (!code) {
+        showResult(false, "Please enter the secret invite passcode.");
+        codeInput.focus();
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "Whitelisting...";
+      resBox.style.display = "none";
+
+      try {
+        const resp = await fetch("/api/whitelist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nickname: nickname, invite_code: code })
+        });
+
+        const data = await resp.json();
+        if (resp.ok && data.success) {
+          showResult(true, data.message || `Success! '${nickname}' is now whitelisted. You can join mc.primordial.my!`);
+        } else {
+          showResult(false, data.message || "Failed to whitelist. Please check the passcode and try again.");
+        }
+      } catch (err) {
+        showResult(false, "Unable to reach whitelist service. Check your connection or contact Primordial directly.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "🔓 Whitelist Me";
+      }
+    }
+
+    function showResult(success, msg) {
+      const resBox = document.getElementById("whitelistResult");
+      resBox.className = "whitelist-result " + (success ? "success" : "error");
+      resBox.innerText = (success ? "✅ " : "❌ ") + msg;
+      resBox.style.display = "block";
     }
 
     // Live Server Ping via public mcstatus API

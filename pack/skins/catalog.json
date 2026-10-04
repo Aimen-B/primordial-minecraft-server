@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "skins": [
+    {
+      "id": "ember_mage",
+      "name": "Ember Mage",
+      "texture": "ember_mage.png",
+      "preview": "ember_mage-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "frost_mage",
+      "name": "Frost Mage",
+      "texture": "frost_mage.png",
+      "preview": "frost_mage-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "forest_ranger",
+      "name": "Forest Ranger",
+      "texture": "forest_ranger.png",
+      "preview": "forest_ranger-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "shadow_rogue",
+      "name": "Shadow Rogue",
+      "texture": "shadow_rogue.png",
+      "preview": "shadow_rogue-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "crystal_knight",
+      "name": "Crystal Knight",
+      "texture": "crystal_knight.png",
+      "preview": "crystal_knight-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "copper_robot",
+      "name": "Copper Robot",
+      "texture": "copper_robot.png",
+      "preview": "copper_robot-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "red_panda",
+      "name": "Red Panda",
+      "texture": "red_panda.png",
+      "preview": "red_panda-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "space_axolotl",
+      "name": "Space Axolotl",
+      "texture": "space_axolotl.png",
+      "preview": "space_axolotl-preview.png",
+      "model": "classic"
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+854748a9958eb3eededad169e73e8af1267ab87635d1a29685905271ec73ddbd  PrimordialLauncher.exe
+d20bf4b391218e29e56994ff55d433cc5061f14c088eed34288d20350c869736  Primordial-Adventures-Portable.zip
