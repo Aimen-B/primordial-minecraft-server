@@ -89,6 +89,10 @@ namespace PrimordialLauncher {
     var serializer = new JavaScriptSerializer();
     File.WriteAllText(autologinPath, serializer.Serialize(data), Encoding.UTF8);
     Credentials.ProtectFile(autologinPath);
+
+    string rootAutologinPath = Path.Combine(GetInstanceFolderPath(), "autologin.json");
+    File.WriteAllText(rootAutologinPath, serializer.Serialize(data), Encoding.UTF8);
+    Credentials.ProtectFile(rootAutologinPath);
    } catch { }
   }
 
