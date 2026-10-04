@@ -908,10 +908,56 @@ namespace PrimordialLauncher {
             else File.Move(temp, path);
         }
 
+        private void EnsureInstanceModsSynced() {
+            try {
+                string targetMods = Path.Combine(GetInstanceFolderPath(), ".minecraft", "mods");
+                if (!Directory.Exists(targetMods)) {
+                    Directory.CreateDirectory(targetMods);
+                }
+
+                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                string[] sourceCandidates = new string[] {
+                    Path.Combine(baseDir, "portable-build", "Primordial-Adventures-Portable", "launcher", "instances", "Primordial-Adventures", ".minecraft", "mods"),
+                    Path.Combine(baseDir, "portable-build", "Primordial-Adventures-Portable", "instances", "Primordial-Adventures", ".minecraft", "mods"),
+                    Path.Combine(baseDir, "launcher", "instances", "Primordial-Adventures", ".minecraft", "mods"),
+                    Path.Combine(baseDir, "instances", "Primordial-Adventures", ".minecraft", "mods"),
+                    !string.IsNullOrEmpty(baseInstallPath) && baseInstallPath != "GLOBAL" ? Path.Combine(baseInstallPath, "launcher", "instances", "Primordial-Adventures", ".minecraft", "mods") : null,
+                    !string.IsNullOrEmpty(baseInstallPath) && baseInstallPath != "GLOBAL" ? Path.Combine(baseInstallPath, "instances", "Primordial-Adventures", ".minecraft", "mods") : null
+                };
+
+                foreach (string srcDir in sourceCandidates) {
+                    if (!string.IsNullOrEmpty(srcDir) && Directory.Exists(srcDir)) {
+                        string fullSrc = Path.GetFullPath(srcDir);
+                        string fullTarget = Path.GetFullPath(targetMods);
+                        if (!string.Equals(fullSrc, fullTarget, StringComparison.OrdinalIgnoreCase)) {
+                            string[] jars = Directory.GetFiles(srcDir, "*.jar");
+                            if (jars.Length > 0) {
+                                int copied = 0;
+                                foreach (string jar in jars) {
+                                    string destFile = Path.Combine(targetMods, Path.GetFileName(jar));
+                                    if (!File.Exists(destFile)) {
+                                        File.Copy(jar, destFile, true);
+                                        copied++;
+                                    }
+                                }
+                                if (copied > 0) {
+                                    LogMessage(string.Format("Synchronized {0} missing mod(s) to game instance.", copied));
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                LogMessage("Mod sync check: " + ex.Message);
+            }
+        }
+
         private void LaunchGame(string nickname) {
             try {
                 LogMessage("============================================");
                 LogMessage(string.Format("[1/4] Preparing player profile for '{0}'...", nickname));
+                EnsureInstanceModsSynced();
 
                 string launcherExe;
                 string accountsJson;
