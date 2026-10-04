@@ -27,68 +27,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         if self.path == "/api/whitelist":
-            self.handle_whitelist()
+            self.reply(403, b'{"success":false,"message":"Ask the host to approve your exact nickname."}')
             return
         if self.path in ("/api/auth/status", "/api/auth/session"):
             self.handle_auth_proxy()
             return
         self.send_error(404)
-
-    def handle_whitelist(self):
-        try:
-            size = int(self.headers.get("Content-Length", "0"))
-            if not 0 < size <= 4096:
-                self.reply(413, b'{"success":false,"message":"Payload too large"}')
-                return
-            payload = json.loads(self.rfile.read(size).decode("utf-8"))
-            nickname = payload.get("nickname", "").strip()
-            invite_code = payload.get("invite_code", "").strip()
-
-            import re, hashlib, uuid
-            if not re.match(r"^[a-zA-Z0-9_]{3,16}$", nickname):
-                self.reply(400, json.dumps({
-                    "success": False,
-                    "message": "Nickname must be 3-16 characters (letters, numbers, underscores)."
-                }).encode())
-                return
-
-            expected_code = os.environ.get("INVITE_CODE", "adventure").strip()
-            if invite_code.lower() != expected_code.lower():
-                self.reply(403, json.dumps({
-                    "success": False,
-                    "message": "Invalid invite passcode. Ask Primordial for the secret invite code!"
-                }).encode())
-                return
-
-            # Compute offline UUID matching Minecraft Java standard
-            md5 = bytearray(hashlib.md5(f"OfflinePlayer:{nickname}".encode("utf-8")).digest())
-            md5[6] = (md5[6] & 0x0f) | 0x30
-            md5[8] = (md5[8] & 0x3f) | 0x80
-            player_uuid = str(uuid.UUID(bytes=bytes(md5)))
-
-            whitelist_path = os.environ.get("WHITELIST_PATH", "/server/whitelist.json")
-            whitelist = []
-            if os.path.exists(whitelist_path):
-                try:
-                    with open(whitelist_path, "r", encoding="utf-8") as f:
-                        whitelist = json.load(f)
-                except Exception:
-                    whitelist = []
-
-            exists = any(entry.get("name", "").lower() == nickname.lower() for entry in whitelist)
-            if not exists:
-                whitelist.append({"uuid": player_uuid, "name": nickname})
-                temp_path = whitelist_path + ".tmp"
-                with open(temp_path, "w", encoding="utf-8") as f:
-                    json.dump(whitelist, f, indent=2)
-                os.replace(temp_path, whitelist_path)
-
-            self.reply(200, json.dumps({
-                "success": True,
-                "message": f"Successfully whitelisted '{nickname}'! You can now launch and connect to mc.primordial.my!"
-            }).encode())
-        except Exception as e:
-            self.reply(500, json.dumps({"success": False, "message": f"Internal server error: {str(e)}"}).encode())
 
     def handle_auth_proxy(self):
         # Only the HTTPS reverse proxy serves authentication.

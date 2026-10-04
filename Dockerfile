@@ -28,7 +28,7 @@ COPY server/eula.txt ./
 COPY server/server.properties ./
 COPY server/ops.json ./
 COPY server/whitelist.json ./
-COPY server/world ./world
+RUN mkdir -p /server/world /server/config/forgelogin
 
 # Copy Web Landing Page and Launcher download
 COPY web ./web

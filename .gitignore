@@ -23,4 +23,8 @@ Desktop.ini
 launcher_config.ini
 *.primordial.bak
 primordial-session.json
+autologin.json
+.agents/
+__pycache__/
+*.pyc
 

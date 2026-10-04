@@ -51,54 +51,43 @@ namespace PrimordialLauncher {
                         entry.ExtractToFile(output);
                     }
                 }
-                string manifestFile = Path.Combine(stage, "package-files.json");
-                PackageManifest manifest = null;
-                if (File.Exists(manifestFile)) {
-                    try {
-                        manifest = new JavaScriptSerializer { MaxJsonLength = 16 * 1024 * 1024 }.Deserialize<PackageManifest>(File.ReadAllText(manifestFile));
-                    } catch { manifest = null; }
+                var manifest = new JavaScriptSerializer { MaxJsonLength = 16 * 1024 * 1024 }.Deserialize<PackageManifest>(File.ReadAllText(Path.Combine(stage,"package-files.json")));
+                if (manifest.version != expectedVersion || manifest.files == null) throw new InvalidDataException("Package version mismatch.");
+                var expected = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var file in manifest.files) {
+                    if (!expected.Add(file.path.Replace('\\','/'))) throw new InvalidDataException("Duplicate package file.");
+                    if (Hash(SafePath(stage,file.path)) != file.sha256) throw new InvalidDataException("Package file checksum failed: " + file.path);
                 }
-
+                foreach (string file in Directory.GetFiles(stage,"*",SearchOption.AllDirectories)) {
+                    string relative = file.Substring(stage.Length + 1).Replace('\\','/');
+                    if (relative != "package-files.json" && !expected.Contains(relative)) throw new InvalidDataException("Unexpected package file.");
+                }
                 string backup = Path.Combine(target,"repair-backups",DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "-" + Guid.NewGuid().ToString("N"));
                 var replaced = new List<string>();
                 var created = new List<string>();
-                var expected = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var moved = new List<string>();
                 Directory.CreateDirectory(target);
                 try {
-                    if (manifest != null && manifest.files != null) {
-                        foreach (var file in manifest.files) {
-                            expected.Add(file.path.Replace('\\','/'));
-                            string relative = file.path;
-                            string output = SafePath(target,relative);
-                            if (Preserve(relative) && File.Exists(output)) continue;
-                            if (Path.GetFullPath(output).Equals(System.Windows.Forms.Application.ExecutablePath,StringComparison.OrdinalIgnoreCase)) continue;
-                            Directory.CreateDirectory(Path.GetDirectoryName(output));
-                            if (File.Exists(output)) {
-                                string previous = SafePath(backup,relative);
-                                Directory.CreateDirectory(Path.GetDirectoryName(previous));
-                                File.Copy(output,previous);
-                                replaced.Add(relative);
-                            } else created.Add(relative);
-                            File.Copy(SafePath(stage,relative),output,true);
-                        }
-                        File.Copy(manifestFile,Path.Combine(target,"package-files.json"),true);
-                    } else {
-                        foreach (string file in Directory.GetFiles(stage,"*",SearchOption.AllDirectories)) {
-                            string relative = file.Substring(stage.Length + 1).Replace('\\','/');
-                            expected.Add(relative);
-                            string output = SafePath(target,relative);
-                            if (Preserve(relative) && File.Exists(output)) continue;
-                            if (Path.GetFullPath(output).Equals(System.Windows.Forms.Application.ExecutablePath,StringComparison.OrdinalIgnoreCase)) continue;
-                            Directory.CreateDirectory(Path.GetDirectoryName(output));
-                            if (File.Exists(output)) {
-                                string previous = SafePath(backup,relative);
-                                Directory.CreateDirectory(Path.GetDirectoryName(previous));
-                                File.Copy(output,previous);
-                                replaced.Add(relative);
-                            } else created.Add(relative);
-                            File.Copy(SafePath(stage,relative),output,true);
-                        }
+                    foreach (var file in manifest.files) {
+                        string relative = file.path;
+                        string output = SafePath(target,relative);
+                        if (Preserve(relative) && File.Exists(output)) continue;
+                        if (Path.GetFullPath(output).Equals(System.Windows.Forms.Application.ExecutablePath,StringComparison.OrdinalIgnoreCase)) continue;
+                        Directory.CreateDirectory(Path.GetDirectoryName(output));
+                        if (File.Exists(output)) {
+                            string previous = SafePath(backup,relative);
+                            Directory.CreateDirectory(Path.GetDirectoryName(previous));
+                            File.Copy(output,previous);
+                            replaced.Add(relative);
+                        } else created.Add(relative);
+                        File.Copy(SafePath(stage,relative),output,true);
                     }
+                    string installedManifest=Path.Combine(target,"package-files.json");
+                    if(File.Exists(installedManifest)) {
+                        Directory.CreateDirectory(backup);
+                        File.Copy(installedManifest,Path.Combine(backup,"package-files.json"));replaced.Add("package-files.json");
+                    } else created.Add("package-files.json");
+                    File.Copy(Path.Combine(stage,"package-files.json"),installedManifest,true);
                     string mods = Path.Combine(target,"launcher","instances","Primordial-Adventures",".minecraft","mods");
                     if (Directory.Exists(mods)) foreach (string mod in Directory.GetFiles(mods)) {
                         string relative = mod.Substring(target.Length + 1).Replace('\\','/');
@@ -106,9 +95,11 @@ namespace PrimordialLauncher {
                             string previous = SafePath(backup,relative);
                             Directory.CreateDirectory(Path.GetDirectoryName(previous));
                             File.Move(mod,previous);
+                            moved.Add(relative);
                         }
                     }
                 } catch {
+                    foreach(string relative in moved)File.Move(SafePath(backup,relative),SafePath(target,relative));
                     foreach (string relative in created) { string path=SafePath(target,relative); if(File.Exists(path))File.Delete(path); }
                     foreach (string relative in replaced) File.Copy(SafePath(backup,relative),SafePath(target,relative),true);
                     throw;

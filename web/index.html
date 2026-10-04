@@ -48,27 +48,12 @@
           ⚡ Standalone Launcher (.exe)
         </a>
       </div>
-      <div class="cta-subtext">⭐ <strong>Recommended:</strong> Full ZIP bundle includes Java 21, Launcher & all 30 mods. Extract & play instantly with zero setup!</div>
+      <div class="cta-subtext">⭐ <strong>Recommended:</strong> Full ZIP bundle includes Java 21, Launcher & all 32 mods. Extract & play instantly with zero setup!</div>
 
-      <!-- Instant Whitelist Card -->
-      <div class="whitelist-section">
-        <div class="whitelist-card">
-          <div class="whitelist-header">
-            <span style="font-size: 1.4rem;">🎟️</span>
-            <h3>Instant Self-Service Whitelist</h3>
-          </div>
-          <p>Enter your exact Minecraft nickname to whitelist yourself and get instant access to the server:</p>
-          <div class="whitelist-form">
-            <input type="text" id="whitelistName" class="whitelist-input" placeholder="Your Minecraft Nickname" maxlength="16">
-            <input type="text" id="whitelistCode" class="whitelist-input" placeholder="Invite Passcode (e.g. adventure)">
-            <button class="btn-whitelist" onclick="submitWhitelist()" id="btnWhitelist">🔓 Whitelist Me</button>
-          </div>
-          <div id="whitelistResult" class="whitelist-result" style="display: none;"></div>
-          <div class="whitelist-hint">
-            💡 <em>Host link:</em> Share <code>https://minecraft.primordial.my/?invite=adventure</code> with friends to auto-fill the passcode!
-          </div>
-        </div>
-      </div>
+      <div class="whitelist-section"><div class="whitelist-card">
+        <h3>Play with approved friends</h3>
+        <p>Ask the host to whitelist your exact nickname. Each approved nickname belongs to one player.</p>
+      </div></div>
     </div>
   </section>
 
@@ -80,7 +65,7 @@
         <div class="step-card">
           <div class="step-number">1</div>
           <h3>Whitelist Your Name</h3>
-          <p>Type your desired username in the <strong>Whitelist card above</strong> with the invite passcode to get instant access.</p>
+          <p>Send your exact nickname to the host for approval before joining.</p>
         </div>
         <div class="step-card">
           <div class="step-number">2</div>
@@ -99,8 +84,13 @@
   <!-- Modpack Highlights -->
   <section class="features-section" id="features">
     <div class="container">
-      <h2 class="section-title">What's in the Adventure Pack? (30 Mods)</h2>
+      <h2 class="section-title">What's in the Adventure Pack? (32 Mods)</h2>
       <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🪝</div>
+          <h3>Grappling Hook Mobility</h3>
+          <p>Swing across massive canyons, scale sheer cliffs, and slingshot through dungeons with craftable grappling hooks, dual-hooks, and motorized winches.</p>
+        </div>
         <div class="feature-card">
           <div class="feature-icon">🎙️</div>
           <h3>Simple Voice Chat</h3>
@@ -108,8 +98,8 @@
         </div>
         <div class="feature-card">
           <div class="feature-icon">🎨</div>
-          <h3>Custom Skins (SkinRestorer)</h3>
-          <p>Offline players have full skins! Type <code>/skin &lt;player&gt;</code> (e.g. <code>/skin Technoblade</code>) or <code>/skin url &lt;link&gt;</code> anytime in chat.</p>
+          <h3>Character Skin Studio</h3>
+          <p>Choose from 16 hilarious and cute built-in skins right in the launcher, clone any Java player appearance, or import your own custom PNG.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🗺️</div>
@@ -181,99 +171,6 @@
       setTimeout(() => { btn.innerText = "Copy IP"; }, 2000);
     }
 
-    // Auto-fill invite code from URL parameters (?invite=adventure or ?code=adventure)
-    window.addEventListener("DOMContentLoaded", () => {
-      const params = new URLSearchParams(window.location.search);
-      const invite = params.get("invite") || params.get("code");
-      if (invite) {
-        const codeInput = document.getElementById("whitelistCode");
-        if (codeInput) codeInput.value = invite;
-      }
-    });
-
-    // Whitelist Form Submission
-    async function submitWhitelist() {
-      const nickInput = document.getElementById("whitelistName");
-      const codeInput = document.getElementById("whitelistCode");
-      const resBox = document.getElementById("whitelistResult");
-      const btn = document.getElementById("btnWhitelist");
-
-      const nickname = nickInput.value.trim();
-      const code = codeInput.value.trim();
-
-      if (!nickname) {
-        showResult(false, "Please enter your Minecraft nickname.");
-        nickInput.focus();
-        return;
-      }
-
-      if (!/^[a-zA-Z0-9_]{3,16}$/.test(nickname)) {
-        showResult(false, "Nickname must be 3-16 characters (letters, numbers, underscores only).");
-        nickInput.focus();
-        return;
-      }
-
-      if (!code) {
-        showResult(false, "Please enter the secret invite passcode.");
-        codeInput.focus();
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText = "Whitelisting...";
-      resBox.style.display = "none";
-
-      try {
-        const resp = await fetch("/api/whitelist", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ nickname: nickname, invite_code: code })
-        });
-
-        const data = await resp.json();
-        if (resp.ok && data.success) {
-          showResult(true, data.message || `Success! '${nickname}' is now whitelisted. You can join mc.primordial.my!`);
-        } else {
-          showResult(false, data.message || "Failed to whitelist. Please check the passcode and try again.");
-        }
-      } catch (err) {
-        showResult(false, "Unable to reach whitelist service. Check your connection or contact Primordial directly.");
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "🔓 Whitelist Me";
-      }
-    }
-
-    function showResult(success, msg) {
-      const resBox = document.getElementById("whitelistResult");
-      resBox.className = "whitelist-result " + (success ? "success" : "error");
-      resBox.innerText = (success ? "✅ " : "❌ ") + msg;
-      resBox.style.display = "block";
-    }
-
-    // Live Server Ping via public mcstatus API
-    async function checkServer() {
-      try {
-        const res = await fetch("https://api.mcstatus.io/v2/status/java/mc.primordial.my");
-        if (res.ok) {
-          const data = await res.json();
-          const dot = document.getElementById("statusDot");
-          const count = document.getElementById("playerCount");
-          if (data.online) {
-            dot.style.background = "#10b981";
-            dot.style.boxShadow = "0 0 12px #10b981";
-            count.innerText = `Online (${data.players.online}/${data.players.max} Players)`;
-          } else {
-            dot.style.background = "#f59e0b";
-            dot.style.boxShadow = "0 0 12px #f59e0b";
-            count.innerText = "Starting up / Standby";
-          }
-        }
-      } catch (err) {
-        document.getElementById("playerCount").innerText = "Online";
-      }
-    }
-    checkServer();
-  </script>
+</script>
 </body>
 </html>

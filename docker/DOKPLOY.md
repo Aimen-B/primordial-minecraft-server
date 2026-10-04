@@ -1,113 +1,26 @@
-# Dokploy & Docker Online Hosting Guide
+# Dokploy deployment guide
 
-This guide explains how to deploy **Primordial Adventures** on Dokploy or any Docker-enabled VPS, configure game connections on `mc.primordial.my`, and serve the web showcase on `minecraft.primordial.my`.
+The current local candidate is a coordinated launcher and server update. It is not deployed. Follow [UPGRADE-CHECKLIST.md](UPGRADE-CHECKLIST.md) before changing the existing service.
 
----
+## Connections
 
-## 1. Domain & DNS Configuration
-In your DNS provider (e.g. Cloudflare or domain registrar for `primordial.my`), add two DNS A records:
+- `mc.primordial.my`: DNS points at the server, with any HTTP proxy disabled. Publish Minecraft TCP 25565.
+- Simple Voice Chat uses UDP 24454 when enabled.
+- `minecraft.primordial.my`: certificate-valid HTTPS routed to web port 8080.
+- Authentication bridge port 8081 remains loopback-only inside the service. Never publish it directly.
 
-| Record Type | Name / Subdomain | Target IP | Proxy Status (Cloudflare) | Purpose |
-| :--- | :--- | :--- | :--- | :--- |
-| **A** | `mc` | `<Your-VPS-IP>` | **DNS Only** (Gray cloud / Off) | Minecraft Game Connection (Port 25565) |
-| **A** | `minecraft` | `<Your-VPS-IP>` | **Proxied** (Orange cloud / On) | Web Landing Page & Launcher Download |
+Verify these against the actual Dokploy ports, proxy configuration and mounted directories. Preserve existing world, accounts, whitelist, operators and configuration. Do not assume image files replace a mounted mods directory.
 
-> ⚠️ **Important:** Keep Cloudflare proxy **OFF** for `mc` because Minecraft uses raw TCP packets on port 25565. Cloudflare proxy can be **ON** for `minecraft` because it is an HTTPS website.
+## Friend access
 
----
+The host approves each exact nickname with `whitelist add <name>` in the server console, or `/whitelist add <name>` in game with operator permission. Keep the whitelist enabled.
 
-## 2. Firewall / Port Forwarding
-Ensure TCP port **25565** is open on your VPS firewall:
-* On Ubuntu VPS (UFW):
-  ```bash
-  sudo ufw allow 25565/tcp
-  sudo ufw allow 24454/udp
-  sudo ufw reload
-  ```
-* In your VPS provider security group (e.g. Hetzner, AWS, Oracle Cloud, DigitalOcean):
-  * Add Inbound Rule 1: Protocol `TCP`, Port `25565`, Source `0.0.0.0/0` (Minecraft Game).
-  * Add Inbound Rule 2: Protocol `UDP`, Port `24454`, Source `0.0.0.0/0` (Simple Voice Chat Proximity Audio).
+An approved friend enters that nickname and a password in the repaired launcher. An unclaimed nickname requires password confirmation. Subsequent launches use the remembered Windows-user credential. Registration and login use HTTPS and the matching client/server authentication bridge; ordinary password chat commands are not the normal flow.
 
----
+Public self-whitelisting and shared invite codes are disabled in the local candidate. The old live website may still show the previous flow until the coordinated deployment is completed.
 
-## 3. Configuring Dokploy (Application Service)
+## Release and rollback
 
-Your single Docker service runs **Minecraft**, **Simple Voice Chat**, and the **Web Hub**:
+Back up the stopped live service and verify restoration before deployment. Retain its previous image, mod set and release. Test existing accounts, world persistence, two-player authentication and skin synchronization before publishing matching downloads and changing public links.
 
-### A. Ports Tab (for Minecraft & Voice Chat)
-1. In Dokploy, go to your service -> **Ports** tab.
-2. Click **Add Port** (Minecraft):
-   * **Published Port:** `25565`
-   * **Target Port:** `25565`
-   * **Protocol:** `TCP`
-3. Click **Add Port** (Simple Voice Chat):
-   * **Published Port:** `24454`
-   * **Target Port:** `24454`
-   * **Protocol:** `UDP`
-4. Click **Save**.
-
-### B. Domains Tab (for the Minecraft Website & Downloads)
-1. In Dokploy, go to your service -> **Domains** tab.
-2. Click **Add Domain**:
-   * **Host:** `minecraft.primordial.my`
-   * **Path:** `/`
-   * **Container Port:** `8080`
-   * **HTTPS:** **Enabled** (Let's Encrypt SSL)
-3. Click **Save**.
-
-### C. Environment Variables (Optional)
-In Dokploy -> **Environment** tab:
-* `INVITE_CODE=adventure` (Secret passcode for the self-service web whitelist. Default is `adventure`).
-
-### D. Deploy
-Click **Deploy**. Dokploy will:
-* Build the container with all 30 mods, custom skins, and the web landing page.
-* Run Minecraft NeoForge on TCP `25565`.
-* Run Simple Voice Chat on UDP `24454`.
-* Run the lightweight web server on port `8080` with automatic HTTPS on `minecraft.primordial.my`.
-
----
-
-## 4. Player Joining & Downloads
-* **Website:** Visitors go to `https://minecraft.primordial.my` to view the server status, self-whitelist, and download the 1-Click Game Bundle.
-* **Game Connection:** Minecraft connects directly to `mc.primordial.my` (or `mc.primordial.my:25565`).
-
----
-
-## 5. Security, Anti-Griefing & Whitelist Management
-
-To prevent internet bots and scanners (Copenheimer, Shodan, Masscan) from joining and ruining your world:
-
-### 🛡️ Built-in Protections:
-1. **Strict Whitelist (`white-list=true`):** 
-   - No unknown player or bot can connect. The server drops unauthorized connections during the handshake before they can even load the world.
-   - `Primordial` is already pre-authorized in `whitelist.json`.
-2. **Account Passwords (`NefAUTH`):**
-   - Even if someone spoofs a whitelisted username, they cannot move, break blocks, or access items without entering `/login <password>`.
-3. **Spawn Protection (`spawn-protection=16`):**
-   - The 16-block radius around world spawn cannot be broken by non-operators.
-4. **Automated Docker Snapshots:**
-   - The Docker container automatically saves a compressed `.tar.gz` world backup every 2 hours to `/server/backups/`, keeping the last 5 snapshots for instant rollback.
-
-### 👥 How to Add Friends:
-* **Option A (Instant Self-Service Whitelist — Recommended!):**
-  Send your friends the link:
-  `https://minecraft.primordial.my/?invite=adventure`
-  They type their nickname and click **Whitelist Me** — they are instantly added to `whitelist.json` with zero effort from you!
-* **Option B (In-Game as Primordial):**
-  Press `T` and run:
-  ```mcfunction
-  /whitelist add <FriendNickname>
-  ```
-* **Option C (In Dokploy Console):**
-  Open your service terminal in Dokploy and type:
-  ```bash
-  whitelist add <FriendNickname>
-  ```
-* **Other Useful Security Commands:**
-  ```mcfunction
-  /whitelist list                 # View all permitted players
-  /whitelist remove <name>        # Revoke access immediately
-  /gamerule mobGriefing false     # Prevent creepers from destroying blocks
-  /gamerule doFireTick false      # Prevent fire from spreading and burning houses
-  ```
+The detailed checklist is authoritative for this candidate. A local test backup is not a backup of the live service.

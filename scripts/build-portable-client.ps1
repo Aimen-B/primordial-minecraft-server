@@ -14,7 +14,7 @@ foreach ($private in @('accounts.json','elyprismlauncher.cfg','launcher_config.i
     if (Test-Path -LiteralPath $candidate) { Remove-Item -LiteralPath $candidate }
 }
 Set-Content (Join-Path $launcher 'portable.txt') ''
-Set-Content (Join-Path $launcher 'elyprismlauncher.cfg') "[General]`nLanguage=en_US`nConfigVersion=1.3`nSelectedInstance=Primordial-Adventures`nInstanceDir=instances`nMinMemAlloc=512`nMaxMemAlloc=4096`nShowConsole=true"
+Set-Content (Join-Path $launcher 'elyprismlauncher.cfg') "[General]`nLanguage=en_US`nConfigVersion=1.3`nSelectedInstance=Primordial-Adventures`nInstanceDir=instances`nMinMemAlloc=512`nMaxMemAlloc=4096`nShowConsole=true`nApplicationTheme=dark`nIconTheme=pe_colored"
 $publicData = Join-Path $env:APPDATA 'ElyPrismLauncher'
 foreach ($sub in @('assets','libraries','meta')) {
     Copy-Item -LiteralPath (Join-Path $publicData $sub) -Destination $launcher -Recurse

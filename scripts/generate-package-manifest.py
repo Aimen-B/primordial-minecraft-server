@@ -3,7 +3,7 @@ import hashlib
 import json
 
 dist_dir = r"D:\minecraft\adventure\portable-build\Primordial-Adventures-Portable"
-version = "1.1.0"
+version = "1.2.0"
 
 files_list = []
 

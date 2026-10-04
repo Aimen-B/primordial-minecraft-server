@@ -1,0 +1,14 @@
+.git
+.agents
+verification
+portable-build
+backups
+downloads
+server/world
+server/logs
+server/crash-reports
+server/config/forgelogin/users.properties
+**/autologin.json
+**/primordial-session.json
+**/accounts.json
+**/*.bin

@@ -1,51 +1,83 @@
 {
-  "version": 1,
+  "version": 2,
   "skins": [
     {
-      "id": "ember_mage",
-      "name": "Ember Mage",
-      "texture": "ember_mage.png",
-      "preview": "ember_mage-preview.png",
+      "id": "gentleman_duck",
+      "name": "Gentleman Duck",
+      "category": "funny",
+      "description": "Dapper yellow duck in a tuxedo & red bow tie",
+      "texture": "gentleman_duck.png",
+      "preview": "gentleman_duck-preview.png",
       "model": "classic"
     },
     {
-      "id": "frost_mage",
-      "name": "Frost Mage",
-      "texture": "frost_mage.png",
-      "preview": "frost_mage-preview.png",
+      "id": "cozy_frog",
+      "name": "Cozy Froggy",
+      "category": "cute",
+      "description": "Adorable smiling face in a pastel green frog hood",
+      "texture": "cozy_frog.png",
+      "preview": "cozy_frog-preview.png",
       "model": "classic"
     },
     {
-      "id": "forest_ranger",
-      "name": "Forest Ranger",
-      "texture": "forest_ranger.png",
-      "preview": "forest_ranger-preview.png",
+      "id": "toasty_bread",
+      "name": "Toasty Bread",
+      "category": "funny",
+      "description": "Happy smiling slice of warm buttered toast",
+      "texture": "toasty_bread.png",
+      "preview": "toasty_bread-preview.png",
       "model": "classic"
     },
     {
-      "id": "shadow_rogue",
-      "name": "Shadow Rogue",
-      "texture": "shadow_rogue.png",
-      "preview": "shadow_rogue-preview.png",
+      "id": "neko_kitty",
+      "name": "Neko Kitty",
+      "category": "cute",
+      "description": "Pastel cat ears hoodie with paw mittens",
+      "texture": "neko_kitty.png",
+      "preview": "neko_kitty-preview.png",
       "model": "classic"
     },
     {
-      "id": "crystal_knight",
-      "name": "Crystal Knight",
-      "texture": "crystal_knight.png",
-      "preview": "crystal_knight-preview.png",
+      "id": "derpy_banana",
+      "name": "Derpy Banana",
+      "category": "funny",
+      "description": "Goofy yellow banana suit with silly eyes",
+      "texture": "derpy_banana.png",
+      "preview": "derpy_banana-preview.png",
       "model": "classic"
     },
     {
-      "id": "copper_robot",
-      "name": "Copper Robot",
-      "texture": "copper_robot.png",
-      "preview": "copper_robot-preview.png",
+      "id": "baby_dino",
+      "name": "Baby Dino",
+      "category": "cute",
+      "description": "Lime green dinosaur pajama onesie",
+      "texture": "baby_dino.png",
+      "preview": "baby_dino-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "gentleman_penguin",
+      "name": "Gentleman Penguin",
+      "category": "funny",
+      "description": "Chubby penguin with golden monocle & bowtie",
+      "texture": "gentleman_penguin.png",
+      "preview": "gentleman_penguin-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "strawberry_cow",
+      "name": "Strawberry Cow",
+      "category": "cute",
+      "description": "Pastel pink cow with strawberry horns",
+      "texture": "strawberry_cow.png",
+      "preview": "strawberry_cow-preview.png",
       "model": "classic"
     },
     {
       "id": "red_panda",
       "name": "Red Panda",
+      "category": "cute",
+      "description": "Cute woodland red panda adventurer",
       "texture": "red_panda.png",
       "preview": "red_panda-preview.png",
       "model": "classic"
@@ -53,8 +85,64 @@
     {
       "id": "space_axolotl",
       "name": "Space Axolotl",
+      "category": "cute",
+      "description": "Cosmic void creature in astronaut armor",
       "texture": "space_axolotl.png",
       "preview": "space_axolotl-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "ember_mage",
+      "name": "Ember Mage",
+      "category": "fantasy",
+      "description": "Pyromancer wizard in crimson enchanted robes",
+      "texture": "ember_mage.png",
+      "preview": "ember_mage-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "frost_mage",
+      "name": "Frost Mage",
+      "category": "fantasy",
+      "description": "Cryomancer spellcaster in chilled azure silk",
+      "texture": "frost_mage.png",
+      "preview": "frost_mage-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "shadow_rogue",
+      "name": "Shadow Rogue",
+      "category": "fantasy",
+      "description": "Stealthy assassin draped in shadow mantle",
+      "texture": "shadow_rogue.png",
+      "preview": "shadow_rogue-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "crystal_knight",
+      "name": "Crystal Knight",
+      "category": "fantasy",
+      "description": "Paladin wrapped in gleaming crystal armor",
+      "texture": "crystal_knight.png",
+      "preview": "crystal_knight-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "forest_ranger",
+      "name": "Forest Ranger",
+      "category": "fantasy",
+      "description": "Elven scout in woodland leather & hood",
+      "texture": "forest_ranger.png",
+      "preview": "forest_ranger-preview.png",
+      "model": "classic"
+    },
+    {
+      "id": "copper_robot",
+      "name": "Copper Robot",
+      "category": "fantasy",
+      "description": "Steampunk automaton with copper gears",
+      "texture": "copper_robot.png",
+      "preview": "copper_robot-preview.png",
       "model": "classic"
     }
   ]

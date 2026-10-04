@@ -82,6 +82,19 @@ if [ ! -f /server/whitelist.json ] || [ ! -s /server/whitelist.json ] || [ "$(ca
 EOF
 fi
 
+# Ensure forgelogin users.properties exists and has Primordial host account pre-registered
+mkdir -p /server/config/forgelogin
+if [ ! -f /server/config/forgelogin/users.properties ]; then
+    echo "Creating users.properties with Primordial pre-registered..."
+    cat <<EOF > /server/config/forgelogin/users.properties
+#ForgeLoginMod users. Passwords are PBKDF2 hashes, not decryptable passwords.
+primordial=v1\$120000\$KRJ0tTzJc8AxO9jC2li1OA\$Pn_LGor73lGhaSaHs0qdpNX99AltKN3_MTD_r0m3oAo
+EOF
+elif ! grep -q "^primordial=" /server/config/forgelogin/users.properties; then
+    echo "Adding Primordial host account to existing users.properties..."
+    echo "primordial=v1\$120000\$KRJ0tTzJc8AxO9jC2li1OA\$Pn_LGor73lGhaSaHs0qdpNX99AltKN3_MTD_r0m3oAo" >> /server/config/forgelogin/users.properties
+fi
+
 # Start automated background world backup routine (runs every 2 hours, keeps last 5 snapshots)
 mkdir -p /server/backups
 backup_routine() {

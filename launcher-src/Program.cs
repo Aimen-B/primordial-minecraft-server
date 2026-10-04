@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -17,8 +17,8 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 
 namespace PrimordialLauncher {
-    public class LauncherForm : Form {
-        public const string VERSION = "1.1.0";
+    public partial class LauncherForm : Form {
+        public const string VERSION = "1.2.0-dev";
         private const string SERVER_HOST = "mc.primordial.my";
         private const int SERVER_PORT = 25565;
         private const string CONFIG_FILE = "launcher_config.ini";
@@ -27,15 +27,22 @@ namespace PrimordialLauncher {
         private Panel pnlSidebar;
         private Panel pnlContent;
         private Button btnNavPlay;
+        private Button btnNavSkins;
         private Button btnNavMods;
         private Button btnNavSettings;
         private Button btnNavHelp;
 
         // UI Panels for Tabs
         private Panel tabPlay;
+        private Panel tabSkins;
         private Panel tabMods;
         private Panel tabSettings;
         private Panel tabHelp;
+
+        // Skin Badge Controls
+        private Panel pnlSkinBadge;
+        private PictureBox pbBadgeThumb;
+        private Label lblBadgeSkinName;
 
         // Tab Play Controls
         private Label lblServerTitle;
@@ -75,7 +82,10 @@ namespace PrimordialLauncher {
             InitUI();
             DetectInstallation();
             LoadConfig();
-            CheckServerStatusAsync();
+            BuildAuthenticationControls();
+            InitActiveSkinFromPreferences();
+            txtNickname.TextChanged += delegate { InitActiveSkinFromPreferences(); };
+            this.Shown += delegate { CheckServerStatusAsync(); };
         }
 
         private void InitUI() {
@@ -116,19 +126,19 @@ namespace PrimordialLauncher {
             // Navigation Buttons
             int btnY = 95;
             btnNavPlay = CreateNavButton("🎮  Play Game", btnY);
-            btnY += 46;
-            btnNavMods = CreateNavButton("📦  Modpack (30)", btnY);
-            btnY += 46;
-            btnNavSettings = CreateNavButton("⚙️  Settings & RAM", btnY);
-            btnY += 46;
-            btnNavHelp = CreateNavButton("📖  Guide & Tips", btnY);
+            btnNavSkins = CreateNavButton("🎨  Custom Skins", 141);
+            btnNavMods = CreateNavButton("📦  Modpack (32)", 187);
+            btnNavSettings = CreateNavButton("⚙️  Settings & RAM", 233);
+            btnNavHelp = CreateNavButton("📖  Guide & Tips", 279);
 
             btnNavPlay.Click += delegate { SwitchTab(tabPlay, btnNavPlay); };
+            btnNavSkins.Click += delegate { SwitchTab(tabSkins, btnNavSkins); };
             btnNavMods.Click += delegate { SwitchTab(tabMods, btnNavMods); };
             btnNavSettings.Click += delegate { SwitchTab(tabSettings, btnNavSettings); };
             btnNavHelp.Click += delegate { SwitchTab(tabHelp, btnNavHelp); };
 
             pnlSidebar.Controls.Add(btnNavPlay);
+            pnlSidebar.Controls.Add(btnNavSkins);
             pnlSidebar.Controls.Add(btnNavMods);
             pnlSidebar.Controls.Add(btnNavSettings);
             pnlSidebar.Controls.Add(btnNavHelp);
@@ -142,6 +152,7 @@ namespace PrimordialLauncher {
 
             // Initialize Tabs
             BuildPlayTab();
+            BuildSkinsTab();
             BuildModsTab();
             BuildSettingsTab();
             BuildHelpTab();
@@ -179,11 +190,12 @@ namespace PrimordialLauncher {
 
         private void SwitchTab(Panel selectedTab, Button activeNavBtn) {
             tabPlay.Visible = (selectedTab == tabPlay);
+            tabSkins.Visible = (selectedTab == tabSkins);
             tabMods.Visible = (selectedTab == tabMods);
             tabSettings.Visible = (selectedTab == tabSettings);
             tabHelp.Visible = (selectedTab == tabHelp);
 
-            Button[] btns = new Button[] { btnNavPlay, btnNavMods, btnNavSettings, btnNavHelp };
+            Button[] btns = new Button[] { btnNavPlay, btnNavSkins, btnNavMods, btnNavSettings, btnNavHelp };
             foreach (Button b in btns) {
                 if (b == activeNavBtn) {
                     b.BackColor = Color.FromArgb(30, 41, 59);
@@ -287,15 +299,18 @@ namespace PrimordialLauncher {
             rbRam8G.AutoSize = true;
             tabPlay.Controls.Add(rbRam8G);
 
+            // Active Skin Badge Control
+            BuildSkinBadgeControl();
+
             // Progress bar
             prgAction = new ProgressBar();
-            prgAction.Location = new Point(25, 178);
-            prgAction.Size = new Size(550, 14);
+            prgAction.Location = new Point(25, 212);
+            prgAction.Size = new Size(550, 4);
             prgAction.Visible = false;
             tabPlay.Controls.Add(prgAction);
 
             lblActionStatus = new Label();
-            lblActionStatus.Location = new Point(25, 196);
+            lblActionStatus.Location = new Point(25, 212);
             lblActionStatus.Size = new Size(550, 18);
             lblActionStatus.Font = new Font("Segoe UI", 8.5f, FontStyle.Regular);
             lblActionStatus.ForeColor = Color.FromArgb(148, 163, 184);
@@ -335,7 +350,7 @@ namespace PrimordialLauncher {
 
             lstLog = new ListBox();
             lstLog.Location = new Point(25, 322);
-            lstLog.Size = new Size(550, 220);
+            lstLog.Size = new Size(550, 205);
             lstLog.BackColor = Color.FromArgb(19, 21, 31);
             lstLog.ForeColor = Color.FromArgb(203, 213, 225);
             lstLog.BorderStyle = BorderStyle.FixedSingle;
@@ -353,7 +368,7 @@ namespace PrimordialLauncher {
             pnlContent.Controls.Add(tabMods);
 
             Label lblModsHeader = new Label();
-            lblModsHeader.Text = "Included Adventure Mods (30 Total)";
+            lblModsHeader.Text = "Included Adventure Mods (32 Total)";
             lblModsHeader.Font = new Font("Segoe UI", 13f, FontStyle.Bold);
             lblModsHeader.ForeColor = Color.FromArgb(16, 185, 129);
             lblModsHeader.Location = new Point(25, 20);
@@ -396,6 +411,8 @@ namespace PrimordialLauncher {
             AddModItem(lv, "Artifacts", "Exploration", "Rare accessories and baubles found in dungeon chests");
             AddModItem(lv, "Farmer's Delight", "Cooking", "Cooking pots, hearty meals, feasts, and knife slicing");
             AddModItem(lv, "SkinRestorer", "Visuals", "Change your in-game skin anytime via /skin command");
+            AddModItem(lv, "Grappling Hook", "Movement", "Craft hooks and swing through the world");
+            AddModItem(lv, "Primordial Integration", "Security & Skins", "Secure automatic login and synchronized bundled skins");
             AddModItem(lv, "Sodium / Embeddium", "Performance", "Next-gen graphics engine for ultra-high FPS");
 
             tabMods.Controls.Add(lv);
@@ -534,7 +551,7 @@ namespace PrimordialLauncher {
             sb.AppendLine("=== SERVER & WHITELIST ===");
             sb.AppendLine("• Server IP: mc.primordial.my (Port: 25565)");
             sb.AppendLine("• Web Hub: https://minecraft.primordial.my");
-            sb.AppendLine("• Self-whitelist: Use invite code 'adventure' on the website!");
+            sb.AppendLine("• Ask the host to whitelist your exact nickname before signing in.");
             sb.AppendLine();
             sb.AppendLine("=== PROXIMITY VOICE CHAT ===");
             sb.AppendLine("• Press 'V' to open voice settings, volume & mic testing");
@@ -546,11 +563,11 @@ namespace PrimordialLauncher {
             sb.AppendLine("• /skin url <url> : Set custom skin from direct image link");
             sb.AppendLine("• /skin clear     : Reset to default character skin");
             sb.AppendLine();
-            sb.AppendLine("=== IN-GAME AUTHENTICATION ===");
-            sb.AppendLine("• First join: Press 'T' and type:");
-            sb.AppendLine("  /register <your_password> <your_password>");
-            sb.AppendLine("• Future joins: Type:");
-            sb.AppendLine("  /login <your_password>");
+            sb.AppendLine("=== AUTOMATIC SIGN-IN ===");
+            sb.AppendLine("• Ask the host to approve your exact nickname.");
+            sb.AppendLine("• Enter your password in the launcher; confirm it when claiming a new name.");
+            sb.AppendLine("• Passwords are remembered securely for your Windows user.");
+            sb.AppendLine("• Use Forget account to remove the saved password. Ask the host for a reset.");
             sb.AppendLine();
             sb.AppendLine("=== TRAVEL & BASE TELEPORTATION ===");
             sb.AppendLine("• /sethome <name> : Save your base location");
@@ -724,6 +741,7 @@ namespace PrimordialLauncher {
                     }
                 } catch { }
 
+                if(IsDisposed || !IsHandleCreated)return;
                 this.BeginInvoke(new Action(delegate {
                     if (online) {
                         lblServerStatus.Text = string.Format("🟢 Online • mc.primordial.my");
@@ -766,7 +784,7 @@ namespace PrimordialLauncher {
             if (!isGameInstalled) {
                 StartGameDownload();
             } else {
-                LaunchGame(nick);
+                BeginAuthentication(nick);
             }
         }
 
@@ -811,11 +829,41 @@ namespace PrimordialLauncher {
         private static void SetConfigValue(string path, string key, string value) {
             string content = File.ReadAllText(path);
             string pattern = "(?m)^" + Regex.Escape(key) + "=[^\r\n]*";
-            content = Regex.IsMatch(content, pattern) ? Regex.Replace(content, pattern, key + "=" + value) : content + "\r\n" + key + "=" + value + "\r\n";
+            if(Regex.IsMatch(content,pattern))content=Regex.Replace(content,pattern,delegate(Match match){return key+"="+value;});
+            else {
+                Match section=Regex.Match(content,@"(?m)^\[General\]\r?\n");
+                if(!section.Success)throw new InvalidDataException("Instance settings are missing the General section.");
+                content=content.Insert(section.Index+section.Length,key+"="+value+"\r\n");
+            }
             File.WriteAllText(path, content);
         }
 
         public static void WriteOfflineAccount(string path, string nickname) {
+            string skinUrl = null;
+            try {
+                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string prefDir = Path.Combine(localAppData, "PrimordialAdventures");
+                string key = string.IsNullOrEmpty(nickname) ? "default" : nickname.Trim();
+                string nickFile = Path.Combine(prefDir, key + ".skin");
+                string skinId = null;
+                if (File.Exists(nickFile)) {
+                    skinId = File.ReadAllText(nickFile).Trim();
+                } else {
+                    string jsonFile = Path.Combine(prefDir, "skin_preferences.json");
+                    if (File.Exists(jsonFile)) {
+                        var ser = new JavaScriptSerializer();
+                        var dict = ser.Deserialize<Dictionary<string, string>>(File.ReadAllText(jsonFile));
+                        if (dict != null && dict.ContainsKey(key)) skinId = dict[key];
+                    }
+                }
+                if (!string.IsNullOrEmpty(skinId)) {
+                    skinUrl = "skins/" + skinId + ".png";
+                }
+            } catch { }
+            WriteOfflineAccount(path, nickname, skinUrl, "classic");
+        }
+
+        public static void WriteOfflineAccount(string path, string nickname, string skinUrl, string skinModel) {
             if (!Regex.IsMatch(nickname, @"^[A-Za-z0-9_]{3,16}$"))
                 throw new ArgumentException("Invalid Minecraft nickname.");
             var serializer = new JavaScriptSerializer();
@@ -836,10 +884,13 @@ namespace PrimordialLauncher {
             digest[6] = (byte)((digest[6] & 15) | 48);
             digest[8] = (byte)((digest[8] & 63) | 128);
             string uuid = BitConverter.ToString(digest).Replace("-", "").ToLowerInvariant();
+
+            string skinUrlValue = !string.IsNullOrEmpty(skinUrl) ? skinUrl : "";
+            string skinModelValue = !string.IsNullOrEmpty(skinModel) ? skinModel : "classic";
             accounts.Add(new {
                 active = true, type = "Offline",
                 entitlement = new { canPlayMinecraft = true, ownsMinecraft = true },
-                profile = new { id = uuid, name = nickname, capes = new object[0], skin = new { id = "", url = "", variant = "" } },
+                profile = new { id = uuid, name = nickname, capes = new object[0], skin = new { id = "", url = skinUrlValue, variant = skinModelValue, model = skinModelValue } },
                 ygg = new { token = "0", iat = 0, extra = new { clientToken = uuid, userName = nickname } }
             });
             root["accounts"] = accounts;
@@ -899,17 +950,24 @@ namespace PrimordialLauncher {
                     throw new InvalidOperationException("Close PineconeMC first, then press Play again so it can load your selected profile.");
                 }
                 LogMessage(string.Format("[3/4] Preparing offline profile for '{0}' (RAM: {1} MB)...", nickname, ramMb));
-                WriteOfflineAccount(accountsJson, nickname);
+                string skinRel = GetActiveSkinRelativePath();
+                WriteOfflineAccount(accountsJson, nickname, skinRel, "classic");
+                string activeInstanceCfg=Path.Combine(GetInstanceFolderPath(),"instance.cfg");
+                SetConfigValue(activeInstanceCfg,"OverrideJavaArgs","true");
+                SetConfigValue(activeInstanceCfg,"JvmArgs","-XX:+UseG1GC");
+                SetConfigValue(activeInstanceCfg,"UseOptimizedJvmArgs","false");
+                SetConfigValue(activeInstanceCfg,"GarbageCollectorPreset","None");
                 if (baseInstallPath == "GLOBAL") {
                     SetConfigValue(instanceCfg, "OverrideMemory", "true");
                     SetConfigValue(instanceCfg, "MaxMemAlloc", ramMb.ToString());
                 }
 
-                // Launch game (strictly --launch without --server)
+                WriteSessionHandoff();
+                // The game consumes a short-lived proof ticket, never a password.
                 LogMessage("[4/4] Launching NeoForge 1.21.1 game engine...");
                 ProcessStartInfo psi = new ProcessStartInfo();
                 psi.FileName = launcherExe;
-                psi.Arguments = "--launch \"Primordial-Adventures\"";
+                psi.Arguments = "--dir \""+Path.GetDirectoryName(accountsJson)+"\" --launch \"Primordial-Adventures\" --profile "+nickname+" --server "+SERVER_HOST+":"+SERVER_PORT;
                 psi.WorkingDirectory = Path.GetDirectoryName(launcherExe);
                 
                 gameProcess = Process.Start(psi);
