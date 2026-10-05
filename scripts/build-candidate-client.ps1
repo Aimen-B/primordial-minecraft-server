@@ -1,6 +1,7 @@
-param([string]$Version = '1.2.0-dev')
+param([string]$Version = '1.2.1')
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
+. (Join-Path $PSScriptRoot 'client-mods.ps1')
 $buildRoot = Join-Path $root 'portable-build'
 $distDir = Join-Path $buildRoot ('Primordial-' + $Version + '-' + (Get-Date -Format 'yyyyMMddHHmmss'))
 New-Item -ItemType Directory -Path $distDir | Out-Null
@@ -26,22 +27,13 @@ Copy-Item -LiteralPath (Join-Path $root 'pack\mmc-pack.json'),(Join-Path $root '
 Add-Content (Join-Path $instance 'instance.cfg') "OverrideJavaLocation=true`nJavaPath=../../../../java/jdk-21.0.12.1+1/bin/javaw.exe"
 Copy-Item -LiteralPath (Join-Path $root 'pack\config') -Destination $game -Recurse
 Copy-Item -LiteralPath (Join-Path $root 'pack\options.txt'),(Join-Path $root 'pack\servers.dat') -Destination $game
-$lock = Get-Content (Join-Path $root 'pack\mods.lock.json') -Raw | ConvertFrom-Json
-foreach ($mod in $lock.mods) {
-    if ($mod.client -eq 'unsupported') { continue }
-    $source = Join-Path $root ('downloads\' + $mod.filename)
-    if ((Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash -ne $mod.sha256) { throw "Checksum failed: $($mod.name)" }
-    Copy-Item -LiteralPath $source -Destination (Join-Path $game 'mods')
-}
-$extras=Get-Content (Join-Path $root 'pack\extra-mods.lock.json') -Raw | ConvertFrom-Json
-foreach($mod in $extras.mods) {
- $source=Join-Path $root ('server\mods\'+$mod.filename)
- if((Get-FileHash $source -Algorithm SHA256).Hash -ne $mod.sha256){throw 'Extra mod checksum failed'}
- Copy-Item -LiteralPath $source -Destination (Join-Path $game 'mods')
-}
-Copy-Item -LiteralPath (Join-Path $root 'verification\integration-build\primordial-bridge-1.2.0-dev.jar') -Destination (Join-Path $game 'mods')
+$additionalJars = @()
+$additionalJars = @((Join-Path $root 'verification\integration-build\primordial-bridge-1.2.0-dev.jar'))
+$clientManifest = Get-ClientModManifest -Root $root -AdditionalJars $additionalJars -Version $Version -ValidateServer
+Install-LockedClientMods -Root $root -ModsFolder (Join-Path $game 'mods') -Manifest $clientManifest -AdditionalJars $additionalJars
+Save-ClientModManifest -Manifest $clientManifest -Path (Join-Path $distDir 'client-mods.json')
+& (Join-Path $PSScriptRoot 'build-launcher.ps1') -OutputPath (Join-Path $distDir 'PrimordialLauncher.exe') -AdditionalJars $additionalJars -Version $Version
 Copy-Item -LiteralPath (Join-Path $root 'pack\skins') -Destination $distDir -Recurse
-Copy-Item -LiteralPath (Join-Path $root 'verification\PrimordialLauncher-development.exe') -Destination (Join-Path $distDir 'PrimordialLauncher.exe')
 Set-Content (Join-Path $distDir 'Play.cmd') "@echo off`r`ncd /d `"%~dp0`"`r`nstart `"`" `"%~dp0PrimordialLauncher.exe`"" -Encoding ASCII
 Set-Content (Join-Path $distDir 'README-HOW-TO-PLAY.txt') "Primordial Adventures $Version`nRun PrimordialLauncher.exe. Use the exact nickname approved by the host.`nStart with 4 GB RAM. Join mc.primordial.my from Multiplayer.`nDEVELOPMENT BUILD: requires coordinated server deployment. Enter your approved nickname and password in the launcher; confirm only for first registration. Credentials are remembered for the current Windows user. Imported skins are previews; use bundled skins for multiplayer."
 Set-Content (Join-Path $distDir 'pack-version.txt') $Version
@@ -55,9 +47,11 @@ $zip = Join-Path $releaseDir 'Primordial-Adventures-Portable.zip'
 if (Test-Path -LiteralPath $zip) { throw "Release output already exists: $zip" }
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 [IO.Compression.ZipFile]::CreateFromDirectory($distDir,$zip,[IO.Compression.CompressionLevel]::Optimal,$false)
-Copy-Item -LiteralPath (Join-Path $root 'verification\PrimordialLauncher-development.exe') -Destination (Join-Path $releaseDir 'PrimordialLauncher.exe')
+Copy-Item -LiteralPath (Join-Path $distDir 'PrimordialLauncher.exe') -Destination (Join-Path $releaseDir 'PrimordialLauncher.exe')
 $assets = @{}
-foreach ($name in @('PrimordialLauncher.exe','Primordial-Adventures-Portable.zip')) {
+Copy-Item -LiteralPath (Join-Path $distDir 'client-mods.json') -Destination $releaseDir
+foreach ($jar in $additionalJars) { Copy-Item -LiteralPath $jar -Destination $releaseDir }
+foreach ($name in (@('PrimordialLauncher.exe','Primordial-Adventures-Portable.zip','client-mods.json') + @($additionalJars | ForEach-Object { Split-Path $_ -Leaf }))) {
     $file = Get-Item (Join-Path $releaseDir $name)
     $hash = (Get-FileHash $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
     $assets[$name] = @{ url="https://github.com/Aimen-B/primordial-minecraft-server/releases/download/v$Version/$name"; size=$file.Length; sha256=$hash }
