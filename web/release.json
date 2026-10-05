@@ -1,18 +1,19 @@
 {
-    "schema": 1,
-    "version": "1.2.0",
-    "minecraft": "1.21.1",
-    "neoforge": "21.1.252",
-    "assets": {
-        "PrimordialLauncher.exe": {
-            "url": "https://github.com/Aimen-B/primordial-minecraft-server/releases/download/v1.2.0/PrimordialLauncher.exe",
-            "sha256": "d5037bac25c9bbdd61bf28002da6bd247d83389fa054a5f4b126fd4eb2b8048d",
-            "size": 99840
-        },
-        "Primordial-Adventures-Portable.zip": {
-            "url": "https://github.com/Aimen-B/primordial-minecraft-server/releases/download/v1.2.0/Primordial-Adventures-Portable.zip",
-            "sha256": "def2d8a5de140db8b3a884b316f63e520f272b8376c15ea60b17747897a74539",
-            "size": 1855410262
-        }
+  "schema": 1,
+  "version": "1.2.0",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.252",
+  "assets": {
+    "PrimordialLauncher.exe": {
+      "url": "https://github.com/Aimen-B/primordial-minecraft-server/releases/download/v1.2.0/PrimordialLauncher.exe",
+      "sha256": "435c6eeb275b499b53491b9bd7d4418a08244712c1e9f4ef362243c8a2b85c9f",
+      "size": 117760
+    },
+    "Primordial-Adventures-Portable.zip": {
+      "url": "https://github.com/Aimen-B/primordial-minecraft-server/releases/download/v1.2.0/Primordial-Adventures-Portable.zip",
+      "sha256": "def2d8a5de140db8b3a884b316f63e520f272b8376c15ea60b17747897a74539",
+      "size": 1855410262
     }
+  },
+  "launcherVersion": "1.2.1"
 }
