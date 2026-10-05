@@ -36,6 +36,8 @@ COPY web ./web
 # Copy entrypoint script
 COPY docker/entrypoint.sh /entrypoint.sh
 COPY docker/webserver.py /webserver.py
+COPY docker/provision-admin.py /provision-admin.py
+COPY docker/admin-bootstrap.json /admin-bootstrap.json
 RUN chmod +x /entrypoint.sh
 
 # Volumes for persistent state
