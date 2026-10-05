@@ -1,0 +1,14 @@
+name: Client mod verification
+on:
+  push:
+    paths: ['launcher-src/**', 'launcher-tests/**', 'scripts/**', 'pack/*.json', '.github/workflows/client-mods.yml']
+  pull_request:
+    paths: ['launcher-src/**', 'launcher-tests/**', 'scripts/**', 'pack/*.json', '.github/workflows/client-mods.yml']
+jobs:
+  verify:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile launcher and run repair regression scenarios
+        shell: powershell
+        run: ./scripts/test-client-mods.ps1

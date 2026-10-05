@@ -18,7 +18,7 @@ using System.Web.Script.Serialization;
 
 namespace PrimordialLauncher {
     public partial class LauncherForm : Form {
-        public const string VERSION = "1.2.0-dev";
+        public const string VERSION = "1.2.1";
         private const string SERVER_HOST = "mc.primordial.my";
         private const int SERVER_PORT = 25565;
         private const string CONFIG_FILE = "launcher_config.ini";
@@ -790,7 +790,7 @@ namespace PrimordialLauncher {
             if (!isGameInstalled) {
                 StartGameDownload();
             } else {
-                BeginAuthentication(nick);
+                VerifyModsAndAuthenticate(nick);
             }
         }
 
@@ -908,56 +908,54 @@ namespace PrimordialLauncher {
             else File.Move(temp, path);
         }
 
-        private void EnsureInstanceModsSynced() {
-            try {
-                string targetMods = Path.Combine(GetInstanceFolderPath(), ".minecraft", "mods");
-                if (!Directory.Exists(targetMods)) {
-                    Directory.CreateDirectory(targetMods);
-                }
+        private ClientModManifest launchMods;
 
-                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-                string[] sourceCandidates = new string[] {
-                    Path.Combine(baseDir, "portable-build", "Primordial-Adventures-Portable", "launcher", "instances", "Primordial-Adventures", ".minecraft", "mods"),
-                    Path.Combine(baseDir, "portable-build", "Primordial-Adventures-Portable", "instances", "Primordial-Adventures", ".minecraft", "mods"),
-                    Path.Combine(baseDir, "launcher", "instances", "Primordial-Adventures", ".minecraft", "mods"),
-                    Path.Combine(baseDir, "instances", "Primordial-Adventures", ".minecraft", "mods"),
-                    !string.IsNullOrEmpty(baseInstallPath) && baseInstallPath != "GLOBAL" ? Path.Combine(baseInstallPath, "launcher", "instances", "Primordial-Adventures", ".minecraft", "mods") : null,
-                    !string.IsNullOrEmpty(baseInstallPath) && baseInstallPath != "GLOBAL" ? Path.Combine(baseInstallPath, "instances", "Primordial-Adventures", ".minecraft", "mods") : null
-                };
-
-                foreach (string srcDir in sourceCandidates) {
-                    if (!string.IsNullOrEmpty(srcDir) && Directory.Exists(srcDir)) {
-                        string fullSrc = Path.GetFullPath(srcDir);
-                        string fullTarget = Path.GetFullPath(targetMods);
-                        if (!string.Equals(fullSrc, fullTarget, StringComparison.OrdinalIgnoreCase)) {
-                            string[] jars = Directory.GetFiles(srcDir, "*.jar");
-                            if (jars.Length > 0) {
-                                int copied = 0;
-                                foreach (string jar in jars) {
-                                    string destFile = Path.Combine(targetMods, Path.GetFileName(jar));
-                                    if (!File.Exists(destFile)) {
-                                        File.Copy(jar, destFile, true);
-                                        copied++;
-                                    }
-                                }
-                                if (copied > 0) {
-                                    LogMessage(string.Format("Synchronized {0} missing mod(s) to game instance.", copied));
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            } catch (Exception ex) {
-                LogMessage("Mod sync check: " + ex.Message);
+        private void VerifyModsAndAuthenticate(string nickname) {
+            foreach (Process existing in Process.GetProcessesByName("elyprismlauncher")) {
+                existing.Dispose();
+                MessageBox.Show("Close PineconeMC and Minecraft before verifying the installation.");
+                return;
             }
+            string instance = GetInstanceFolderPath();
+            string installRoot = baseInstallPath == "GLOBAL" ? AppDomain.CurrentDomain.BaseDirectory : baseInstallPath;
+            isDownloading = true;
+            UpdateActionButton();
+            lblActionStatus.Visible = true;
+            lblActionStatus.Text = "Verifying game mods...";
+            Action<string> progress = delegate(string message) {
+                if (!IsDisposed) BeginInvoke(new Action(delegate { LogMessage(message); lblActionStatus.Text = message; }));
+            };
+            ThreadPool.QueueUserWorkItem(delegate {
+                bool ready = false;
+                try {
+                    var manifest = ClientMods.ForLaunch(installRoot, instance, progress);
+                    ClientMods.VerifyGameVersion(instance, manifest);
+                    ClientMods.Repair(Path.Combine(instance, ".minecraft", "mods"), manifest, progress, ClientMods.Download);
+                    ClientMods.Cache(instance, manifest);
+                    launchMods = manifest;
+                    ready = true;
+                } catch (Exception error) {
+                    if (!IsDisposed) BeginInvoke(new Action(delegate {
+                        LogMessage("Launch stopped: " + error.Message);
+                        MessageBox.Show("Game mods could not be verified. Minecraft was not started.\n\n" + error.Message + "\n\nCheck your connection and press Play to retry.", "Mod verification failed");
+                    }));
+                } finally {
+                    if (!IsDisposed) BeginInvoke(new Action(delegate {
+                        isDownloading = false;
+                        lblActionStatus.Visible = false;
+                        UpdateActionButton();
+                        if (ready) BeginAuthentication(nickname);
+                    }));
+                }
+            });
         }
-
         private void LaunchGame(string nickname) {
             try {
                 LogMessage("============================================");
                 LogMessage(string.Format("[1/4] Preparing player profile for '{0}'...", nickname));
-                EnsureInstanceModsSynced();
+                if (launchMods == null) throw new InvalidDataException("Verify game mods before launching.");
+                ClientMods.VerifyGameVersion(GetInstanceFolderPath(), launchMods);
+                ClientMods.Verify(Path.Combine(GetInstanceFolderPath(), ".minecraft", "mods"), launchMods);
 
                 string launcherExe;
                 string accountsJson;

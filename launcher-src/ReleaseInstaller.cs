@@ -15,7 +15,7 @@ namespace PrimordialLauncher {
         public const string ManifestUrl = "https://github.com/Aimen-B/primordial-minecraft-server/releases/latest/download/release.json";
         public static ReleaseManifest GetRelease() {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            using (var client = new WebClient()) {
+            using (var client = new TimedWebClient()) {
                 var result = new JavaScriptSerializer().Deserialize<ReleaseManifest>(client.DownloadString(ManifestUrl));
                 if (result.schema != 1 || result.assets == null) throw new InvalidDataException("Unsupported release manifest.");
                 foreach (var asset in result.assets.Values) {
