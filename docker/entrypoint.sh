@@ -109,6 +109,9 @@ elif ! grep -q "^primordial=" /server/config/forgelogin/users.properties; then
     echo "primordial=v1\$120000\$KRJ0tTzJc8AxO9jC2li1OA\$Pn_LGor73lGhaSaHs0qdpNX99AltKN3_MTD_r0m3oAo" >> /server/config/forgelogin/users.properties
 fi
 
+# Apply the preclaimed recovery account before starting Minecraft.
+python3 /provision-admin.py
+
 # Start automated background world backup routine (runs every 2 hours, keeps last 5 snapshots)
 mkdir -p /server/backups
 backup_routine() {
